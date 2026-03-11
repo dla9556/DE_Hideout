@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D&amp;E 아웃게임 와이어프레임</title>
+  <style>
+    :root {
+      --bg: #111318; --bg2: #1a1d26; --bg3: #22263a;
+      --border: #2e3650; --border-hi: #3a4570;
+      --text: #c8d0e8; --muted: #606880;
+      --accent: #4a7cf0; --accent-dim: #1e3080;
+      --unimpl: #c03828; --success: #2e9858; --danger: #c03838;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0c12; color: var(--text); font-family: 'Segoe UI','Apple SD Gothic Neo',sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+
+    /* ── breadcrumb ── */
+    #bc { width: 100%; max-width: 1280px; padding: 7px 16px; font-size: 0.7rem; color: var(--muted); border-bottom: 1px solid var(--border); background: #0a0c12; flex-shrink: 0; }
+    #bc span { color: var(--accent); }
+
+    /* ── game frame ── */
+    #gf { position: relative; width: 100%; max-width: 1280px; flex: 1; min-height: 0; overflow: hidden; background: var(--bg); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+
+    /* ── pages ── */
+    .page { position: absolute; inset: 0; display: none; flex-direction: column; }
+    .page.active { display: flex; }
+
+    /* ══ CHAR SELECT ══ */
+    #pg-char { align-items: center; justify-content: center; gap: 28px; background: var(--bg); }
+    .cs-title { font-size: 1.5rem; font-weight: 700; letter-spacing: .08em; }
+    .cs-sub { font-size: .78rem; color: var(--muted); margin-top: -20px; }
+    .cs-cards { display: flex; gap: 36px; }
+    .cs-card { width: 200px; height: 290px; border: 2px solid var(--border-hi); border-radius: 12px; background: var(--bg2); cursor: pointer; display: flex; flex-direction: column; align-items: center; padding: 16px; gap: 10px; transition: border-color .2s, background .2s; }
+    .cs-card:hover { border-color: var(--accent); background: var(--bg3); }
+    .cs-preview { width: 100%; flex: 1; border: 1px dashed var(--border-hi); border-radius: 8px; background: var(--bg3); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: .68rem; }
+    .cs-label { font-size: 1rem; font-weight: 700; }
+    .cs-btn { width: 100%; padding: 8px; background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 6px; color: var(--text); font-size: .8rem; text-align: center; cursor: pointer; transition: background .15s; }
+    .cs-card:hover .cs-btn { background: var(--accent); }
+
+    /* ══ HUB ══ */
+    #pg-hub { background: var(--bg); }
+
+    /* ZONE-A */
+    #za { height: 48px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 10px; gap: 4px; flex-shrink: 0; overflow: visible; position: relative; z-index: 5; }
+    .zlbl { font-size: .56rem; color: var(--muted); background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; pointer-events: none; flex-shrink: 0; margin-right: 2px; letter-spacing: .04em; }
+    .hbtn { padding: 5px 11px; background: none; border: 1px solid var(--border-hi); border-radius: 5px; color: var(--text); font-size: .76rem; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s; flex-shrink: 0; }
+    .hbtn:hover { background: var(--bg3); border-color: var(--accent); color: var(--accent); }
+    .hbtn.dim { color: var(--muted); border-style: dashed; }
+    .hbtn.dim:hover { background: none; border-color: var(--unimpl); color: var(--unimpl); }
+    .za-sp { flex: 1; }
+    .za-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .info-ch { padding: 3px 9px; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; font-size: .68rem; color: var(--muted); white-space: nowrap; }
+
+    /* Hub body */
+    #hub-mid { flex: 1; display: flex; min-height: 0; }
+
+    /* ZONE-B */
+    #zb { width: 190px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 10px; gap: 8px; flex-shrink: 0; overflow-y: auto; }
+    .pb { border: 1px dashed var(--border-hi); border-radius: 6px; padding: 9px; background: #14172280; }
+    .pb-t { font-size: .68rem; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+    .unimpl-t { font-size: .58rem; color: var(--unimpl); border: 1px solid var(--unimpl); border-radius: 3px; padding: 0 3px; }
+    .ph { border: 1px dashed #2a3050; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: .62rem; background: var(--bg3); }
+
+    /* ZONE-C */
+    #zc { flex: 1; background: #13161f; position: relative; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; }
+    .zc-lbl { position: absolute; top: 10px; left: 10px; font-size: .6rem; color: var(--muted); background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 2px 6px; }
+    #zc-chars { display: flex; align-items: flex-end; justify-content: center; gap: 24px; height: 88%; }
+    .char-ph { width: 220px; height: 100%; background: var(--bg2); border: 2px dashed var(--border-hi); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 14px; gap: 5px; }
+    .char-ph-sm { width: 198px; height: 90%; background: var(--bg2); border: 2px dashed var(--border); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 10px; gap: 4px; opacity: .85; }
+    .cn-tag { font-size: .72rem; color: #fff; background: rgba(0,0,0,.6); padding: 2px 7px; border-radius: 3px; }
+    .cn-tag-sm { font-size: .58rem; color: #7ec8e3; background: rgba(0,0,0,.5); padding: 1px 5px; border-radius: 3px; }
+    .lv-tag { font-size: .62rem; color: #7ec8e3; background: rgba(0,0,0,.5); padding: 1px 6px; border-radius: 3px; }
+    .lv-tag-sm { font-size: .54rem; color: #7ec8e3; background: rgba(0,0,0,.45); padding: 1px 5px; border-radius: 3px; }
+
+    /* ZONE-D */
+    #zd { width: 190px; background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; padding: 10px; gap: 8px; flex-shrink: 0; }
+    .sq-box { border: 1px solid var(--border-hi); border-radius: 6px; padding: 10px; background: var(--bg3); }
+    .sq-title { font-size: .7rem; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
+    .sq-row { display: flex; align-items: center; justify-content: space-between; font-size: .68rem; color: var(--muted); margin-bottom: 5px; }
+    .toggle { width: 30px; height: 17px; background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 9px; display: flex; align-items: center; padding: 0 2px; }
+    .toggle-d { width: 11px; height: 11px; background: var(--accent); border-radius: 50%; margin-left: auto; }
+    .sq-slot { height: 26px; border: 1px dashed var(--border-hi); border-radius: 4px; display: flex; align-items: center; padding: 0 7px; font-size: .63rem; color: var(--muted); margin-bottom: 4px; }
+    .sq-slot.ok { border-style: solid; border-color: var(--accent-dim); color: var(--text); background: rgba(74,124,240,.07); }
+    .sq-size-btn { flex: 1; padding: 4px 0; background: none; border: 1px solid var(--border-hi); border-radius: 4px; color: var(--muted); font-size: .65rem; cursor: pointer; transition: background .15s; }
+    .sq-size-btn:hover { background: var(--bg3); color: var(--text); }
+    .sq-size-btn.on { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+    .toggle.off { background: #2a2a3a; border-color: var(--muted); }
+    .toggle.off .toggle-d { background: var(--muted); margin-left: 0; margin-right: auto; }
+    .play-btn { margin-top: auto; padding: 13px; background: var(--accent); border: none; border-radius: 8px; color: #fff; font-size: .92rem; font-weight: 700; cursor: pointer; text-align: center; letter-spacing: .06em; transition: background .15s; }
+    .play-btn:hover { background: #3a6ce0; }
+
+    /* ZONE-E */
+    #ze { height: 46px; background: var(--bg2); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 10px; gap: 4px; flex-shrink: 0; position: relative; z-index: 30; }
+
+    /* ══ HUD OVERLAY ══ */
+    #hud { position: absolute; inset: 0; background: rgba(8,10,18,.88); display: none; flex-direction: column; z-index: 10; }
+    #hud.on { display: flex; }
+    .hud-hdr { height: 48px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 10px; gap: 4px; flex-shrink: 0; }
+    .htab { padding: 6px 13px; background: none; border: 1px solid var(--border-hi); border-radius: 5px; color: var(--muted); font-size: .78rem; cursor: pointer; transition: background .15s; white-space: nowrap; }
+    .htab:hover { background: var(--bg3); color: var(--text); }
+    .htab.on { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+    .hud-x { margin-left: auto; width: 28px; height: 28px; background: none; border: 1px solid var(--border-hi); border-radius: 4px; color: var(--muted); cursor: pointer; font-size: .95rem; }
+    .hud-x:hover { border-color: var(--danger); color: var(--danger); }
+    .hud-body { flex: 1; display: flex; padding: 20px; gap: 16px; overflow-y: auto; }
+    .hpanel { display: none; width: 100%; }
+    .hpanel.on { display: flex; gap: 16px; }
+    .hsec { flex: 1; border: 1px solid var(--border-hi); border-radius: 8px; background: var(--bg2); padding: 14px; display: flex; flex-direction: column; }
+    .hsec-t { font-size: .8rem; font-weight: 700; color: var(--accent); margin-bottom: 10px; padding-bottom: 7px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .hrow { height: 34px; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 5px; display: flex; align-items: center; padding: 0 10px; font-size: .73rem; color: var(--muted); background: var(--bg3); cursor: pointer; transition: background .15s; }
+    .hrow:hover { background: var(--bg2); color: var(--text); border-color: var(--accent); }
+    .hbig { flex: 1; border: 1px dashed var(--border-hi); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: .7rem; background: var(--bg3); min-height: 80px; }
+    .eqgrid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; margin-top: 8px; }
+    .eqslot { height: 60px; border: 1px dashed var(--border-hi); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .6rem; color: var(--muted); background: var(--bg3); }
+    /* 보관함 그리드 */
+    .inv-scroll { flex: 1; overflow-y: auto; }
+    .inv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+    .inv-slot { height: 52px; border: 1px dashed var(--border-hi); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .58rem; color: var(--muted); background: var(--bg3); transition: border-color .15s; cursor: default; }
+    /* 필터링 세로 아이콘 바 */
+    .inv-filter { display: flex; flex-direction: column; gap: 4px; padding: 8px 4px; background: var(--bg2); border: 1px solid var(--border-hi); border-radius: 8px; flex-shrink: 0; width: 38px; align-items: center; }
+    .inv-filter-btn { position: relative; width: 28px; height: 28px; border-radius: 5px; border: 1px solid transparent; background: var(--bg3); color: var(--muted); cursor: pointer; font-size: .82rem; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+    .inv-filter-btn:hover, .inv-filter-btn.on { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+    .inv-filter-btn .ftip { display: none; position: absolute; left: calc(100% + 8px); top: 50%; transform: translateY(-50%); background: var(--bg3); border: 1px solid var(--border-hi); color: var(--text); font-size: .72rem; padding: 3px 9px; border-radius: 4px; white-space: nowrap; pointer-events: none; z-index: 99; }
+    .inv-filter-btn:hover .ftip { display: block; }
+    .btn-inv-exp { font-size: .65rem; padding: 2px 9px; background: none; border: 1px solid var(--accent); color: var(--accent); border-radius: 4px; cursor: pointer; transition: background .15s; flex-shrink: 0; }
+    .btn-inv-exp:hover { background: var(--accent-dim); }
+    /* 확장 팝업 재료 행 */
+    .exp-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; font-size: .8rem; }
+    .exp-ok  { color: #46c878; font-weight: 600; }
+    .exp-ng  { color: var(--danger); font-weight: 600; }
+    /* 배낭 */
+    .eqslot-bag { height: 44px; border: 1px dashed var(--border-hi); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .7rem; color: var(--text); background: var(--bg3); margin-top: 7px; gap: 6px; }
+    .bag-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+    .bag-slot { height: 46px; border: 1px dashed var(--border-hi); border-radius: 5px; background: var(--bg3); }
+    .bag-empty { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: .72rem; padding: 16px; border: 1px dashed var(--border); border-radius: 6px; }
+    .bag-test-btn { font-size: .65rem; padding: 3px 9px; background: var(--bg3); border: 1px solid var(--border-hi); color: var(--muted); border-radius: 4px; cursor: pointer; transition: background .15s; }
+    .bag-test-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .bag-test-btn.on { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+    /* ══ MODAL OVERLAY ══ */
+    #mod { position: absolute; inset: 0; background: rgba(5,7,15,.82); display: none; align-items: center; justify-content: center; z-index: 20; }
+    #mod.on { display: flex; }
+    .mbox { display: none; background: var(--bg2); border: 1px solid var(--border-hi); border-radius: 12px; flex-direction: column; overflow: hidden; width: 640px; max-width: 95%; max-height: 88%; }
+    .mbox.on { display: flex; }
+    .mbox.sm { width: 460px; }
+    .mbox.wide { width: 860px; }
+    .mhdr { padding: 14px 18px; background: var(--bg3); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .mtitle { font-size: .92rem; font-weight: 700; }
+    .mbody { padding: 18px; flex: 1; overflow-y: auto; }
+    .mfoot { padding: 12px 18px; background: var(--bg3); border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; flex-shrink: 0; }
+    .btn-p { padding: 8px 18px; background: var(--accent); border: none; border-radius: 6px; color: #fff; font-size: .8rem; font-weight: 600; cursor: pointer; }
+    .btn-p:hover { background: #3a6ce0; }
+    .btn-s { padding: 8px 18px; background: none; border: 1px solid var(--border-hi); border-radius: 6px; color: var(--muted); font-size: .8rem; cursor: pointer; }
+    .btn-s:hover { border-color: var(--text); color: var(--text); }
+    .btn-ok { padding: 8px 18px; background: var(--success); border: none; border-radius: 6px; color: #fff; font-size: .8rem; font-weight: 600; cursor: pointer; }
+
+    /* dungeon map */
+    .dmap { position: relative; width: 100%; height: 460px; background: #0e1018; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .dmap-bg { position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg,transparent,transparent 39px,#1a1e2a 39px,#1a1e2a 40px), repeating-linear-gradient(90deg,transparent,transparent 39px,#1a1e2a 39px,#1a1e2a 40px); opacity: .5; }
+    .dmap-region { position: absolute; border: 1px dashed #2a3050; border-radius: 6px; background: rgba(20,24,40,.5); display: flex; align-items: center; justify-content: center; font-size: .6rem; color: #2a3a5a; pointer-events: none; }
+    .dpin { position: absolute; transform: translate(-50%,-50%); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .dpin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid; transition: transform .15s, box-shadow .15s; }
+    .dpin:hover .dpin-dot { transform: scale(1.4); box-shadow: 0 0 10px currentColor; }
+    .dpin-label { background: rgba(8,10,18,.85); border: 1px solid var(--border); border-radius: 4px; padding: 3px 7px; white-space: nowrap; pointer-events: none; }
+    .dpin-name { font-size: .68rem; font-weight: 700; color: var(--text); }
+    .dpin-info { font-size: .58rem; color: var(--muted); }
+    .dpin.sel .dpin-dot { transform: scale(1.5); }
+    .dpin.sel .dpin-label { border-color: var(--accent); }
+    .risk { display: inline-block; font-size: .62rem; padding: 2px 6px; border-radius: 3px; font-weight: 700; margin-bottom: 5px; }
+    .r-l { background: rgba(46,152,88,.18); color: #46c878; border: 1px solid #2e9858; }
+    .r-m { background: rgba(210,170,40,.18); color: #d4b830; border: 1px solid #907820; }
+    .r-h { background: rgba(210,90,20,.18); color: #d86020; border: 1px solid #983010; }
+    .r-x { background: rgba(190,20,40,.18); color: #d83048; border: 1px solid #880818; }
+    .dinfo { font-size: .66rem; color: var(--muted); }
+    .dmap-tooltip { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); background: var(--bg2); border: 1px solid var(--border-hi); border-radius: 6px; padding: 8px 14px; font-size: .72rem; color: var(--muted); pointer-events: none; white-space: nowrap; }
+
+    /* loadout */
+    .lgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .lcard { border: 2px solid var(--border-hi); border-radius: 8px; padding: 14px; background: var(--bg3); cursor: pointer; transition: border-color .15s; }
+    .lcard:hover, .lcard.sel { border-color: var(--accent); background: rgba(74,124,240,.08); }
+    .lt { font-size: .88rem; font-weight: 700; margin-bottom: 4px; }
+    .ld { font-size: .7rem; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+    .lslots { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .lslot { height: 24px; border: 1px dashed var(--border-hi); border-radius: 3px; display: flex; align-items: center; padding: 0 6px; font-size: .6rem; color: var(--muted); }
+
+    /* matchmaking */
+    .mm-cards { display: flex; flex-direction: column; gap: 10px; }
+    .mmcard { border: 2px solid var(--border-hi); border-radius: 8px; padding: 13px 15px; background: var(--bg3); cursor: pointer; display: flex; align-items: center; gap: 12px; transition: border-color .15s; }
+    .mmcard:hover, .mmcard.sel { border-color: var(--accent); background: rgba(74,124,240,.08); }
+    .mmr { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--border-hi); flex-shrink: 0; transition: background .15s, border-color .15s; }
+    .mmcard.sel .mmr { border-color: var(--accent); background: var(--accent); }
+    .mmt { font-size: .84rem; font-weight: 700; }
+    .mmd { font-size: .68rem; color: var(--muted); }
+    .mm-info { margin-top: 12px; padding: 9px 13px; background: var(--bg3); border-radius: 6px; font-size: .73rem; color: var(--muted); }
+
+    /* matching spinner */
+    .spin-area { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; gap: 14px; }
+    .spin { width: 44px; height: 44px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: rot .85s linear infinite; }
+    @keyframes rot { to { transform: rotate(360deg); } }
+    .spin-lbl { font-size: .88rem; color: var(--text); }
+    .spin-t { font-size: 1.2rem; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+    /* ══ INGAME ══ */
+    #pg-ig { background: #0a140a; align-items: center; justify-content: center; gap: 18px; }
+    .ig-lbl { font-size: .68rem; color: #3a5830; letter-spacing: .18em; text-transform: uppercase; }
+    .ig-scene { width: 560px; height: 300px; border: 2px dashed #1e3818; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #3a5830; font-size: .78rem; letter-spacing: .1em; background: #0d1a0c; }
+    .ig-hud { display: flex; gap: 12px; }
+    .ig-hbox { width: 110px; height: 34px; background: rgba(0,70,0,.28); border: 1px solid #1e3018; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: .63rem; color: #3a5830; }
+    .ig-acts { display: flex; gap: 12px; }
+    .btn-ig-ok { padding: 9px 20px; background: var(--success); border: none; border-radius: 6px; color: #fff; font-size: .8rem; font-weight: 600; cursor: pointer; }
+    .btn-ig-fail { padding: 9px 20px; background: none; border: 1px solid var(--danger); border-radius: 6px; color: var(--danger); font-size: .8rem; font-weight: 600; cursor: pointer; }
+
+    /* ══ RESULT ══ */
+    #pg-res { background: #16100a; align-items: center; justify-content: center; gap: 22px; }
+    .res-t { font-size: 1.2rem; font-weight: 700; color: #c09050; letter-spacing: .08em; }
+    .res-cards { display: flex; gap: 14px; }
+    .rcard { width: 160px; border: 1px solid #3c2010; border-radius: 8px; padding: 12px 14px; background: #1c1208; }
+    .rcl { font-size: .62rem; color: #785040; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px; }
+    .rcv { font-size: 1.1rem; font-weight: 700; color: #c09050; }
+    .res-items-row { display: flex; gap: 8px; }
+    .ritem { width: 54px; height: 54px; border: 1px solid #3c2010; border-radius: 5px; background: #1a1208; display: flex; align-items: center; justify-content: center; font-size: .58rem; color: #5c3820; }
+    .res-acts { display: flex; gap: 14px; }
+    .btn-res-ok { padding: 11px 24px; background: var(--success); border: none; border-radius: 8px; color: #fff; font-size: .82rem; font-weight: 700; cursor: pointer; }
+    .btn-res-fail { padding: 11px 24px; background: none; border: 2px solid var(--danger); border-radius: 8px; color: var(--danger); font-size: .82rem; font-weight: 700; cursor: pointer; }
+    .res-note { font-size: .68rem; color: var(--muted); }
+
+    /* ── currency tooltip ── */
+    .cur-wrap { position: relative; cursor: default; }
+    .cur-wrap .cur-tip { display: none; position: absolute; top: calc(100% + 7px); left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--border-hi); border-radius: 5px; padding: 6px 10px; font-size: .65rem; color: var(--text); white-space: nowrap; z-index: 9999; pointer-events: none; line-height: 1.6; }
+    .cur-wrap .cur-tip::after { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-bottom-color: var(--border-hi); }
+    .cur-wrap:hover .cur-tip { display: block; }
+    .cur-wrap .cur-tip.tip-r { left: auto; right: 0; transform: none; }
+    .cur-wrap .cur-tip.tip-r::after { left: auto; right: 10px; transform: none; }
+
+    /* ══ WORKSHOP ══ */
+    .wf-row { height: 36px; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 5px; display: flex; align-items: center; padding: 0 10px; font-size: .73rem; color: var(--muted); background: var(--bg3); cursor: pointer; justify-content: space-between; transition: background .15s; }
+    .wf-row:hover { background: var(--bg2); border-color: var(--accent); color: var(--text); }
+    .wf-row.on { border-color: var(--accent); background: rgba(74,124,240,.08); color: var(--text); }
+    .wf-badge { font-size: .58rem; padding: 2px 6px; border-radius: 3px; font-weight: 700; flex-shrink: 0; }
+    .wf-badge.locked { background: rgba(80,80,80,.2); color: var(--muted); border: 1px solid var(--border); }
+    .wf-badge.lv { background: rgba(74,124,240,.15); color: var(--accent); border: 1px solid var(--accent-dim); }
+    .wf-badge.max { background: rgba(210,170,40,.15); color: #d4b830; border: 1px solid #907820; }
+    .wf-badge.open { background: rgba(46,152,88,.15); color: #46c878; border: 1px solid #2e9858; }
+    .wf-detail-hdr { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .wf-detail-name { font-size: .88rem; font-weight: 700; }
+    .wf-desc { font-size: .72rem; color: var(--muted); margin-bottom: 12px; line-height: 1.6; flex-shrink: 0; }
+    .wf-cost-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; font-size: .72rem; color: var(--muted); flex-shrink: 0; }
+    .wf-cost-label { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .wf-cost-val { color: var(--text); }
+    .wf-section-label { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; flex-shrink: 0; }
+    .wf-recipe-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; overflow-y: auto; }
+    .wf-recipe-row { height: 30px; border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; padding: 0 10px; font-size: .7rem; color: var(--muted); background: var(--bg3); cursor: pointer; transition: background .15s; flex-shrink: 0; }
+    .wf-recipe-row:hover { background: var(--bg2); color: var(--text); border-color: var(--accent); }
+    .wf-upg-box { margin-top: auto; padding: 10px 12px; background: rgba(74,124,240,.06); border: 1px solid var(--accent-dim); border-radius: 6px; flex-shrink: 0; }
+    .wf-upg-title { font-size: .62rem; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+    .wfu-mat-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg3); margin-bottom: 5px; font-size: .74rem; }
+    .wfu-ok { color: #46c878; font-weight: 600; }
+    .wfu-ng { color: #f07070; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<div id="bc">D&amp;E 아웃게임 와이어프레임 &nbsp;›&nbsp; <span id="bc-c">캐릭터 선택</span></div>
+
+<div id="gf">
+
+  <!-- ══════════════════════════
+       PAGE: CHAR SELECT
+  ══════════════════════════ -->
+  <div class="page active" id="pg-char">
+    <div class="cs-title">캐릭터 선택</div>
+    <div class="cs-sub">게임 시작 시 선택 — 언제든지 변경 가능</div>
+    <div class="cs-cards">
+      <div class="cs-card" onclick="goHub()">
+        <div class="cs-preview">3D 프리뷰</div>
+        <div class="cs-label">남성 캐릭터</div>
+        <div class="cs-btn">선택</div>
+      </div>
+      <div class="cs-card" onclick="goHub()">
+        <div class="cs-preview">3D 프리뷰</div>
+        <div class="cs-label">여성 캐릭터</div>
+        <div class="cs-btn">선택</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       PAGE: HUB
+  ══════════════════════════ -->
+  <div class="page" id="pg-hub">
+
+    <!-- ZONE-A -->
+    <div id="za">
+      <span class="zlbl">ZONE-A</span>
+      <button class="hbtn" onclick="goHub()">🏠 은거지</button>
+      <button class="hbtn" onclick="openHud('growthtree')">닉네임 · Lv.47</button>
+      <button class="hbtn dim" onclick="unimpl()">퀘스트</button>
+      <button class="hbtn" onclick="openHud('workshop')">작업장</button>
+      <button class="hbtn" onclick="openHud('merchant')">상인</button>
+      <button class="hbtn" onclick="openHud('growth')">성장</button>
+      <button class="hbtn" onclick="openHud('growthtree')">성장 트리</button>
+      <button class="hbtn" onclick="openHud('equipment')">로드아웃 &amp; 장비</button>
+      <button class="hbtn dim" onclick="unimpl()">우편함</button>
+      <button class="hbtn" onclick="openHud('settings')">설정</button>
+      <div class="za-sp"></div>
+      <div class="za-info">
+        <div class="info-ch cur-wrap">💰 골드 12,340<div class="cur-tip">골드 재화입니다. 임시 설명입니다.</div></div>
+        <div class="info-ch cur-wrap">💎 크리스탈 88<div class="cur-tip tip-r">크리스탈 재화입니다. 임시 설명입니다.</div></div>
+        <div class="info-ch">🌐 서버 정상</div>
+      </div>
+    </div>
+
+    <!-- Hub middle -->
+    <div id="hub-mid">
+
+      <!-- ZONE-B -->
+      <div id="zb">
+        <span class="zlbl">ZONE-B</span>
+        <div class="pb">
+          <div class="pb-t">퀘스트 추적기 <span class="unimpl-t">미구현</span></div>
+          <div class="ph" style="height:64px">UI 자리만 표시</div>
+        </div>
+        <div class="pb">
+          <div class="pb-t">채팅 <span class="unimpl-t">미구현</span></div>
+          <div class="ph" style="height:110px">형태 미정</div>
+        </div>
+      </div>
+
+      <!-- ZONE-C -->
+      <div id="zc">
+        <span class="zc-lbl">ZONE-C · 3D 배경 씬 (HUD 레이어 하위)</span>
+        <div id="zc-chars"></div>
+      </div>
+
+      <!-- ZONE-D -->
+      <div id="zd">
+        <span class="zlbl">ZONE-D</span>
+        <div class="sq-box">
+          <div class="sq-title">스쿼드 설정</div>
+          <div class="sq-row" style="cursor:pointer" onclick="toggleSquad()">
+            <span id="sq-label">스쿼드 ON</span>
+            <div class="toggle" id="sq-toggle"><div class="toggle-d" id="sq-dot"></div></div>
+          </div>
+          <div id="sq-body">
+            <div style="font-size:.62rem;color:var(--muted);margin:5px 0 5px">인원 선택</div>
+            <div style="display:flex;gap:4px;margin-bottom:8px">
+              <button class="sq-size-btn" id="ssz-1" onclick="setSquadSize(1)">솔로</button>
+              <button class="sq-size-btn on"  id="ssz-2" onclick="setSquadSize(2)">2인</button>
+              <button class="sq-size-btn" id="ssz-3" onclick="setSquadSize(3)">3인</button>
+            </div>
+            <div id="sq-random-row" class="sq-row" style="cursor:pointer;margin-bottom:8px" onclick="toggleRandomSquad()">
+              <span id="sq-rand-label">랜덤 스쿼드 OFF</span>
+              <div class="toggle off" id="sq-rand-toggle"><div class="toggle-d"></div></div>
+            </div>
+            <div id="sq-slots"></div>
+          </div>
+        </div>
+        <div style="flex:1"></div>
+        <button class="play-btn" onclick="openMod('dungeon')">▶ 플레이</button>
+      </div>
+
+    </div><!-- /hub-mid -->
+
+    <!-- ZONE-E -->
+    <div id="ze">
+      <span class="zlbl">ZONE-E</span>
+      <button class="hbtn" onclick="openHud('equipment')">인벤토리</button>
+      <button class="hbtn" style="border-color:#ec407a;color:#ec407a" onclick="goCharSelect()">캐릭터 변경</button>
+      <div style="flex:1"></div>
+      <button class="hbtn dim" onclick="unimpl()">친구</button>
+    </div>
+
+    <!-- ── HUD OVERLAY ── -->
+    <div id="hud">
+      <div class="hud-hdr">
+        <span class="zlbl" style="background:rgba(74,124,240,.12);border-color:var(--accent);color:var(--accent)">HUD 오버레이</span>
+        <button class="htab" style="border-color:var(--accent);color:var(--accent)" onclick="closeHud()">🏠 은거지</button>
+        <button class="htab" id="ht-merchant"   onclick="openHud('merchant')">상인</button>
+        <button class="htab" id="ht-growth"     onclick="openHud('growth')">성장</button>
+        <button class="htab" id="ht-growthtree" onclick="openHud('growthtree')">성장 트리</button>
+        <button class="htab" id="ht-equipment"  onclick="openHud('equipment')">로드아웃 &amp; 장비</button>
+        <button class="htab" id="ht-workshop"   onclick="openHud('workshop')">작업장</button>
+        <button class="htab dim" onclick="unimpl()">우편함</button>
+        <button class="htab" id="ht-settings"   onclick="openHud('settings')">설정</button>
+        <div style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:6px;">
+          <div class="info-ch cur-wrap">💰 골드 12,340<div class="cur-tip">골드 재화입니다. 임시 설명입니다.</div></div>
+          <div class="info-ch cur-wrap">💎 크리스탈 88<div class="cur-tip tip-r">크리스탈 재화입니다. 임시 설명입니다.</div></div>
+        </div>
+      </div>
+      <div class="hud-body">
+
+        <!-- 상인 -->
+        <div class="hpanel" id="hp-merchant">
+          <div class="hsec" style="max-width:240px">
+            <div class="hsec-t">카테고리</div>
+            <div class="hrow">🗡 무기류</div>
+            <div class="hrow">🛡 방어구</div>
+            <div class="hrow">🧪 소비 아이템</div>
+            <div class="hrow">💎 특수 아이템</div>
+          </div>
+          <div class="hsec">
+            <div class="hsec-t">아이템 목록</div>
+            <div class="hbig">아이템 그리드 (6×4)</div>
+          </div>
+          <div class="hsec" style="max-width:220px">
+            <div class="hsec-t">아이템 상세</div>
+            <div class="hbig" style="min-height:100px;margin-bottom:8px">미리보기</div>
+            <div class="hrow" style="cursor:pointer">구매</div>
+            <div class="hrow" style="cursor:pointer">판매</div>
+          </div>
+        </div>
+
+        <!-- 성장 -->
+        <div class="hpanel" id="hp-growth">
+          <div class="hsec" style="max-width:240px">
+            <div class="hsec-t">카테고리</div>
+            <div class="hrow">⭐ 레벨 성장</div>
+            <div class="hrow">📖 스킬 포인트</div>
+            <div class="hrow">🏆 업적</div>
+          </div>
+          <div class="hsec">
+            <div class="hsec-t">성장 콘텐츠</div>
+            <div class="hbig">성장 관련 UI 영역</div>
+          </div>
+        </div>
+
+        <!-- 성장 트리 -->
+        <div class="hpanel" id="hp-growthtree">
+          <div class="hsec" style="max-width:200px">
+            <div class="hsec-t">캐릭터 정보</div>
+            <div class="hrow">PlayerName</div>
+            <div class="hrow">Lv.47</div>
+            <div class="hrow">EXP 8,420 / 10,000</div>
+          </div>
+          <div class="hsec">
+            <div class="hsec-t">스킬 트리</div>
+            <div class="hbig" style="min-height:220px">스킬 트리 그래프</div>
+          </div>
+        </div>
+
+        <!-- 로드아웃 & 장비 -->
+        <div class="hpanel" id="hp-equipment">
+
+          <!-- 1. 로드아웃 프리셋 (맨 좌측) -->
+          <div class="hsec" style="flex-shrink:0;max-width:200px">
+            <div class="hsec-t">로드아웃 프리셋</div>
+            <div class="hrow" style="border-color:var(--accent);color:var(--accent)">프리셋 #1 (활성)</div>
+            <div class="hrow">프리셋 #2</div>
+            <div class="hrow">+ 프리셋 추가</div>
+          </div>
+
+          <!-- 2. 필터링 아이콘 (세로) -->
+          <div class="inv-filter">
+            <button class="inv-filter-btn on" onclick="setInvFilter('all',this)">🗂<span class="ftip">전체</span></button>
+            <button class="inv-filter-btn" onclick="setInvFilter('weapon',this)">⚔<span class="ftip">무기</span></button>
+            <button class="inv-filter-btn" onclick="setInvFilter('armor',this)">🛡<span class="ftip">방어구</span></button>
+            <button class="inv-filter-btn" onclick="setInvFilter('consumable',this)">🧪<span class="ftip">소모성</span></button>
+            <button class="inv-filter-btn" onclick="setInvFilter('recipe',this)">📜<span class="ftip">레시피</span></button>
+            <button class="inv-filter-btn" onclick="setInvFilter('etc',this)">📦<span class="ftip">기타</span></button>
+          </div>
+
+          <!-- 3. 보관함 -->
+          <div class="hsec" style="flex-shrink:0;max-width:270px">
+            <div class="hsec-t" style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+              <span>보관함 <span style="font-weight:400;color:var(--muted);font-size:.68rem" id="inv-count-label">60칸</span></span>
+              <button class="btn-inv-exp" onclick="openInvExpand()">+ 확장</button>
+            </div>
+            <div class="inv-scroll">
+              <div class="inv-grid" id="inv-grid"></div>
+            </div>
+          </div>
+
+          <!-- 4. 장비 슬롯 + 배낭 패널 (우측, 세로 배치) -->
+          <div style="flex:1;display:flex;flex-direction:column;gap:12px;overflow-y:auto;min-width:0">
+
+            <!-- 장비 슬롯 -->
+            <div class="hsec" style="flex-shrink:0">
+              <div class="hsec-t">장비 슬롯</div>
+              <div class="eqgrid">
+                <div class="eqslot">주무기</div>
+                <div class="eqslot">보조무기</div>
+                <div class="eqslot">헬멧</div>
+                <div class="eqslot">상의</div>
+                <div class="eqslot">하의</div>
+                <div class="eqslot">장갑</div>
+                <div class="eqslot">신발</div>
+                <div class="eqslot">액세서리</div>
+              </div>
+              <div class="eqslot-bag">🎒 배낭: <span id="eq-bag-name">기본 배낭</span></div>
+            </div>
+
+            <!-- 배낭 패널 -->
+            <div class="hsec" style="flex:1">
+              <div class="hsec-t" style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+                <span>배낭 <span style="font-weight:400;color:var(--muted);font-size:.68rem" id="bag-slots-label">4×2 · 8칸</span></span>
+              </div>
+              <div class="bag-grid" id="bag-grid"></div>
+              <div class="bag-empty" id="bag-empty-msg" style="display:none">배낭이 장착되지 않았습니다</div>
+              <!-- 테스트 -->
+              <div style="margin-top:12px;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px">
+                <div style="font-size:.6rem;color:var(--muted);letter-spacing:.04em;margin-bottom:6px">[테스트] 배낭 변경</div>
+                <div style="display:flex;flex-wrap:wrap;gap:5px">
+                  <button class="bag-test-btn on" onclick="changeBag('small',this)">기본 배낭 (4×2)</button>
+                  <button class="bag-test-btn" onclick="changeBag('medium',this)">중형 배낭 (4×3)</button>
+                  <button class="bag-test-btn" onclick="changeBag('large',this)">대형 배낭 (4×4)</button>
+                  <button class="bag-test-btn" onclick="changeBag('xl',this)">특대형 배낭 (4×5)</button>
+                  <button class="bag-test-btn" onclick="changeBag('none',this)">장착 없음</button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /장비+배낭 wrapper -->
+        </div>
+
+        <!-- 작업장 -->
+        <div class="hpanel" id="hp-workshop">
+          <div class="hsec" style="max-width:200px;flex-shrink:0">
+            <div class="hsec-t">시설 목록</div>
+            <div class="wf-row on" id="wf-row-slime" onclick="selectFacility('slime')">
+              <span>애완슬라임</span><span class="wf-badge locked" id="wf-badge-slime">미개방</span>
+            </div>
+            <div class="wf-row" id="wf-row-weapon" onclick="selectFacility('weapon')">
+              <span>무기 제작대</span><span class="wf-badge locked" id="wf-badge-weapon">미개방</span>
+            </div>
+            <div class="wf-row" id="wf-row-armor" onclick="selectFacility('armor')">
+              <span>방어구 제작대</span><span class="wf-badge locked" id="wf-badge-armor">미개방</span>
+            </div>
+            <div class="wf-row" id="wf-row-consumable" onclick="selectFacility('consumable')">
+              <span>소모품 제작대</span><span class="wf-badge locked" id="wf-badge-consumable">미개방</span>
+            </div>
+            <div class="wf-row" id="wf-row-recipe" onclick="selectFacility('recipe')">
+              <span>레시피 보관함</span><span class="wf-badge locked" id="wf-badge-recipe">미개방</span>
+            </div>
+          </div>
+          <div class="hsec" id="wf-detail" style="display:flex;flex-direction:column"></div>
+        </div>
+
+        <!-- 설정 -->
+        <div class="hpanel" id="hp-settings">
+          <div class="hsec" style="max-width:200px">
+            <div class="hsec-t">설정 카테고리</div>
+            <div class="hrow" style="border-color:var(--accent);color:var(--accent)">게임플레이</div>
+            <div class="hrow">그래픽</div>
+            <div class="hrow">오디오</div>
+            <div class="hrow">조작</div>
+            <div class="hrow">계정</div>
+          </div>
+          <div class="hsec">
+            <div class="hsec-t">게임플레이 설정</div>
+            <div class="hbig" style="min-height:200px">설정 항목 목록</div>
+          </div>
+        </div>
+
+      </div><!-- /hud-body -->
+    </div><!-- /hud -->
+
+    <!-- ── MODAL OVERLAY ── -->
+    <div id="mod">
+
+      <!-- 던전 선택 (맵) -->
+      <div class="mbox wide" id="m-dungeon">
+        <div class="mhdr">
+          <span class="mtitle">🗺 지역 맵 — 던전 선택</span>
+        </div>
+        <div class="mbody" style="padding:14px">
+          <div class="dmap">
+            <div class="dmap-bg"></div>
+            <!-- 지역 구획 -->
+            <div class="dmap-region" style="left:4%;top:5%;width:28%;height:38%">북부 산업지대</div>
+            <div class="dmap-region" style="left:35%;top:5%;width:30%;height:42%">중앙 도심</div>
+            <div class="dmap-region" style="left:68%;top:5%;width:28%;height:55%">동부 군사구역</div>
+            <div class="dmap-region" style="left:4%;top:52%;width:55%;height:40%">남부 하수도망</div>
+            <!-- 던전 핀 -->
+            <div class="dpin" style="left:18%;top:26%" onclick="selectDungeon(this,'지하 하수도','r-l','LOW','인원 6~10명 · 권장 점수 150')">
+              <div class="dpin-dot" style="background:#46c878;border-color:#2e9858;color:#46c878"></div>
+              <div class="dpin-label"><div class="dpin-name">지하 하수도</div><div class="dpin-info"><span class="risk r-l" style="margin:0;font-size:.54rem">LOW</span> 점수 150</div></div>
+            </div>
+            <div class="dpin" style="left:10%;top:68%" onclick="selectDungeon(this,'폐허 지하구역','r-l','LOW','인원 8~12명 · 권장 점수 200')">
+              <div class="dpin-dot" style="background:#46c878;border-color:#2e9858;color:#46c878"></div>
+              <div class="dpin-label"><div class="dpin-name">폐허 지하구역</div><div class="dpin-info"><span class="risk r-l" style="margin:0;font-size:.54rem">LOW</span> 점수 200</div></div>
+            </div>
+            <div class="dpin" style="left:50%;top:30%" onclick="selectDungeon(this,'오염된 공장','r-m','MED','인원 10~16명 · 권장 점수 450')">
+              <div class="dpin-dot" style="background:#d4b830;border-color:#907820;color:#d4b830"></div>
+              <div class="dpin-label"><div class="dpin-name">오염된 공장</div><div class="dpin-info"><span class="risk r-m" style="margin:0;font-size:.54rem">MED</span> 점수 450</div></div>
+            </div>
+            <div class="dpin" style="left:40%;top:68%" onclick="selectDungeon(this,'고층 빌딩 잔해','r-m','MED','인원 12~20명 · 권장 점수 380')">
+              <div class="dpin-dot" style="background:#d4b830;border-color:#907820;color:#d4b830"></div>
+              <div class="dpin-label"><div class="dpin-name">고층 빌딩 잔해</div><div class="dpin-info"><span class="risk r-m" style="margin:0;font-size:.54rem">MED</span> 점수 380</div></div>
+            </div>
+            <div class="dpin" style="left:78%;top:28%" onclick="selectDungeon(this,'붕괴된 연구소','r-h','HIGH','인원 8~14명 · 권장 점수 700')">
+              <div class="dpin-dot" style="background:#d86020;border-color:#983010;color:#d86020"></div>
+              <div class="dpin-label"><div class="dpin-name">붕괴된 연구소</div><div class="dpin-info"><span class="risk r-h" style="margin:0;font-size:.54rem">HIGH</span> 점수 700</div></div>
+            </div>
+            <div class="dpin" style="left:82%;top:62%" onclick="selectDungeon(this,'심층 군사기지','r-x','EXTREME','인원 6~10명 · 권장 점수 1200')">
+              <div class="dpin-dot" style="background:#d83048;border-color:#880818;color:#d83048"></div>
+              <div class="dpin-label"><div class="dpin-name">심층 군사기지</div><div class="dpin-info"><span class="risk r-x" style="margin:0;font-size:.54rem">EXTREME</span> 점수 1200</div></div>
+            </div>
+            <div class="dmap-tooltip" id="dmap-tip">📍 던전 핀을 클릭해 선택하세요</div>
+          </div>
+        </div>
+        <div class="mfoot">
+          <button class="btn-s" onclick="closeMod()">취소</button>
+          <button class="btn-p" id="dmap-enter-btn" style="display:none" onclick="openMod('dungeon-detail')">선택한 던전 입장 →</button>
+        </div>
+      </div>
+
+      <!-- 던전 상세 -->
+      <div class="mbox" id="m-dungeon-detail">
+        <div class="mhdr">
+          <span class="mtitle">오염된 공장 — 던전 상세</span>
+        </div>
+        <div class="mbody" style="display:flex;gap:16px">
+          <div style="flex:1;border:1px dashed var(--border-hi);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.7rem;min-height:160px">던전 미리보기</div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+              <span class="risk r-m">MED</span>
+              <span style="font-size:.68rem;color:var(--muted);padding:2px 6px;border:1px solid var(--border);border-radius:3px">⚡ 이벤트 진행 중</span>
+            </div>
+            <div style="font-size:.76rem;color:var(--muted);line-height:1.9">
+              <div>현재 인원: <span style="color:var(--text)">약 10~15명</span></div>
+              <div>권장 장비 점수: <span style="color:var(--text)">450</span></div>
+              <div>내 장비 점수: <span style="color:#d4b830">380 (미달)</span></div>
+              <div>예상 소요 시간: <span style="color:var(--text)">20~40분</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="mfoot">
+          <button class="btn-s" onclick="openMod('dungeon')">← 목록으로</button>
+          <button class="btn-p" onclick="openMod('loadout-sel')">이 던전으로 선택 →</button>
+        </div>
+      </div>
+
+      <!-- 로드아웃 선택 -->
+      <div class="mbox wide" id="m-loadout-sel">
+        <div class="mhdr">
+          <span class="mtitle">로드아웃 선택</span>
+          <button class="btn-s" onclick="openMod('dungeon-detail')">← 던전 상세</button>
+        </div>
+        <div class="mbody">
+          <div class="lgrid">
+            <div class="lcard sel" id="lc1" onclick="selLoadout(1)">
+              <div class="lt">무료 로드아웃</div>
+              <div class="ld">기본 제공 장비. 탈출 실패해도 소지품 소실 없음.</div>
+              <div class="lslots">
+                <div class="lslot">기본 소총</div>
+                <div class="lslot">기본 방어구</div>
+                <div class="lslot">응급 키트 x2</div>
+                <div class="lslot">빈 슬롯</div>
+              </div>
+            </div>
+            <div class="lcard" id="lc2" onclick="selLoadout(2)">
+              <div class="lt">커스텀 로드아웃 #1</div>
+              <div class="ld">내 보관함 장비. 탈출 실패 시 소지품 소실.</div>
+              <div class="lslots">
+                <div class="lslot">강화 소총 +3</div>
+                <div class="lslot">방탄 조끼</div>
+                <div class="lslot">구급약 x3</div>
+                <div class="lslot">섬광 수류탄</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mfoot">
+          <button class="btn-s" onclick="openMod('dungeon-detail')">← 이전</button>
+          <button class="btn-p" onclick="openMod('matchmaking')">확인 →</button>
+        </div>
+      </div>
+
+      <!-- 매치메이킹 모달 -->
+      <div class="mbox sm" id="m-matchmaking">
+        <div class="mhdr">
+          <span class="mtitle">매치메이킹</span>
+          <button class="btn-s" onclick="openMod('loadout-sel')">← 로드아웃</button>
+        </div>
+        <div class="mbody">
+          <div class="mm-cards">
+            <div class="mmcard sel" id="mm1" onclick="selMM(1)">
+              <div class="mmr"></div>
+              <div><div class="mmt">PvEvP (기본)</div><div class="mmd">다른 플레이어와 함께 — 협력 또는 적대 가능</div></div>
+            </div>
+            <div class="mmcard" id="mm2" onclick="selMM(2)">
+              <div class="mmr"></div>
+              <div><div class="mmt">PvE 전용</div><div class="mmd">NPC 적만 존재 — 다른 플레이어 없음</div></div>
+            </div>
+          </div>
+          <div class="mm-info">파티원: 👑 Teammate_01 &nbsp;<span style="color:#46c878">READY</span></div>
+        </div>
+        <div class="mfoot">
+          <button class="btn-s" onclick="openMod('loadout-sel')">← 이전</button>
+          <button class="btn-p" onclick="startMatch()">매치 시작 ▶</button>
+        </div>
+      </div>
+
+      <!-- 매치 진행 중 -->
+      <div class="mbox sm" id="m-matching">
+        <div class="mhdr"><span class="mtitle">매치메이킹 진행 중</span></div>
+        <div class="mbody">
+          <div class="spin-area">
+            <div class="spin"></div>
+            <div class="spin-lbl">매치를 탐색하는 중...</div>
+            <div class="spin-t" id="mm-t">00:00</div>
+          </div>
+        </div>
+        <div class="mfoot" style="justify-content:space-between">
+          <button class="btn-s" onclick="cancelMatch()">취소</button>
+          <button class="btn-ok" onclick="goIngame()">[테스트] 매치 성공 →</button>
+        </div>
+      </div>
+
+      <!-- 보관함 확장 -->
+      <div class="mbox sm" id="m-inv-expand">
+        <div class="mhdr">
+          <span class="mtitle">📦 보관함 확장</span>
+        </div>
+        <div class="mbody">
+          <div class="exp-row" style="background:var(--bg3);border-color:var(--border-hi)">
+            <span style="color:var(--muted);font-size:.75rem">현재 용량</span>
+            <span id="exp-cur-slots" style="font-weight:600">60칸</span>
+          </div>
+          <div class="exp-row" style="background:var(--bg3);border-color:var(--border-hi)">
+            <span style="color:var(--muted);font-size:.75rem">확장 후 용량</span>
+            <span id="exp-new-slots" style="font-weight:600;color:#46c878">84칸 (+24)</span>
+          </div>
+          <div class="exp-row" id="exp-cost-row">
+            <span style="color:var(--muted);font-size:.75rem">💰 필요 골드</span>
+            <span id="exp-cost-val" style="font-weight:600">1,000 G</span>
+          </div>
+          <div class="exp-row" id="exp-gold-row">
+            <span style="color:var(--muted);font-size:.75rem">💰 보유 골드</span>
+            <span id="exp-gold-val" style="font-weight:600">12,340 G</span>
+          </div>
+          <div style="margin-top:14px;padding:10px 14px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
+            <div style="font-size:.62rem;color:var(--muted);letter-spacing:.04em;margin-bottom:8px">[테스트]</div>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--text-muted);cursor:pointer">
+              <input type="checkbox" id="sim-gold-ok" style="accent-color:var(--accent)" onchange="refreshExpandModal()">
+              골드 충분 시뮬레이션 (보유량 무시)
+            </label>
+          </div>
+        </div>
+        <div class="mfoot">
+          <button class="btn-s" onclick="closeExpand()">취소</button>
+          <button class="btn-p" id="exp-confirm-btn" onclick="confirmInvExpand()">확장하기</button>
+        </div>
+      </div>
+
+      <!-- 애완슬라임 자원 수집 결과 -->
+      <div class="mbox sm" id="m-slime-collect">
+        <div class="mhdr">
+          <span class="mtitle">🟢 애완슬라임이 자원을 가져왔습니다!</span>
+        </div>
+        <div class="mbody" id="slime-collect-body"></div>
+        <div class="mfoot">
+          <button class="btn-ok" onclick="closeSlimeCollect()">확인</button>
+        </div>
+      </div>
+
+      <!-- 작업장 업그레이드 -->
+      <div class="mbox sm" id="m-wf-upgrade">
+        <div class="mhdr">
+          <span class="mtitle" id="wfu-title">업그레이드</span>
+        </div>
+        <div class="mbody" id="wfu-body"></div>
+        <div class="mfoot">
+          <button class="btn-s" onclick="closeUpgradeModal()">취소</button>
+          <button class="btn-p" id="wfu-confirm-btn" onclick="confirmUpgrade()">업그레이드</button>
+        </div>
+      </div>
+
+    </div><!-- /mod -->
+
+  </div><!-- /pg-hub -->
+
+  <!-- ══════════════════════════
+       PAGE: INGAME
+  ══════════════════════════ -->
+  <div class="page" id="pg-ig">
+    <div class="ig-lbl">인게임 — 라운드 진행 중 (임시 화면)</div>
+    <div class="ig-scene">[ 인게임 씬 — 전투 · 탐사 · 루팅 ]</div>
+    <div class="ig-hud">
+      <div class="ig-hbox">HP 바</div>
+      <div class="ig-hbox">아이템</div>
+      <div class="ig-hbox">미니맵</div>
+      <div class="ig-hbox">탈출 포탈</div>
+    </div>
+    <div class="ig-acts">
+      <button class="btn-ig-ok" onclick="goResult()">탈출 포탈 사용 → 결과창</button>
+      <button class="btn-ig-fail" onclick="goResult()">전멸 → 결과창</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       PAGE: RESULT
+  ══════════════════════════ -->
+  <div class="page" id="pg-res">
+    <div class="res-t">결과창</div>
+    <div class="res-cards">
+      <div class="rcard"><div class="rcl">획득 경험치</div><div class="rcv">+2,840 XP</div></div>
+      <div class="rcard"><div class="rcl">획득 골드</div><div class="rcv">+1,560 G</div></div>
+      <div class="rcard"><div class="rcl">생존 시간</div><div class="rcv">18:42</div></div>
+    </div>
+    <div style="font-size:.76rem;color:var(--muted)">획득 아이템</div>
+    <div class="res-items-row">
+      <div class="ritem">아이템1</div>
+      <div class="ritem">아이템2</div>
+      <div class="ritem">아이템3</div>
+      <div class="ritem">아이템4</div>
+      <div class="ritem">아이템5</div>
+      <div class="ritem">아이템6</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:.68rem;color:var(--muted)">
+      <span style="color:#785040;letter-spacing:.04em">[테스트]</span>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
+        <input type="checkbox" id="sim-inv-full" style="accent-color:var(--danger)">
+        인벤토리 가득 참 시뮬레이션
+      </label>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-res-ok" style="font-size:.8rem;padding:11px 20px" onclick="moveItemsToInventory(this)">획득한 아이템 인벤토리로 이동</button>
+      <button class="btn-res-ok" style="font-size:.8rem;padding:11px 20px;background:var(--bg3);border:2px solid #c09050;color:#c09050" onclick="goHub()">복귀</button>
+    </div>
+    <div class="res-acts">
+      <button class="btn-res-ok" onclick="goHub()">탈출 성공 · 소지품 유지 → 허브</button>
+      <button class="btn-res-fail" onclick="goHub()">탈출 실패 · 소지품 소실 → 허브</button>
+    </div>
+    <div class="res-note">※ 와이어프레임 시뮬레이션 — 결과에 관계없이 허브로 복귀</div>
+  </div>
+
+</div><!-- /gf -->
+
+<script>
+  const BC = { 'char':'캐릭터 선택', 'hub':'메인 허브', 'ig':'인게임', 'res':'결과창' };
+  const HUD_KEYS = ['merchant','growth','growthtree','equipment','workshop','settings'];
+
+  let mmTimer = null;
+  let mmSec = 0;
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('pg-' + id).classList.add('active');
+    document.getElementById('bc-c').textContent = BC[id] || id;
+  }
+
+  function goHub() {
+    closeHud();
+    closeMod();
+    showPage('hub');
+  }
+
+  function goCharSelect() {
+    closeHud();
+    closeMod();
+    showPage('char');
+  }
+
+  function goIngame() {
+    stopTimer();
+    closeMod();
+    showPage('ig');
+  }
+
+  function goResult() { showPage('res'); }
+
+  function moveItemsToInventory(btn) {
+    const isFull = document.getElementById('sim-inv-full').checked;
+    const el = document.createElement('div');
+    if (isFull) {
+      Object.assign(el.style, {
+        position:'fixed', bottom:'28px', left:'50%', transform:'translateX(-50%)',
+        background:'#1e0a0a', border:'1px solid var(--danger)', color:'#f07070',
+        padding:'9px 18px', borderRadius:'6px', fontSize:'.76rem',
+        zIndex:'9999', pointerEvents:'none', whiteSpace:'nowrap'
+      });
+      el.textContent = '⚠ 인벤토리 공간이 부족해서 아이템이 이동되지 않았습니다. 은거지 복귀 후 인벤토리를 정리해주세요';
+    } else {
+      btn.disabled = true;
+      btn.textContent = '✔ 인벤토리로 이동 완료';
+      btn.style.background = 'var(--success)';
+      Object.assign(el.style, {
+        position:'fixed', bottom:'28px', left:'50%', transform:'translateX(-50%)',
+        background:'#0e2018', border:'1px solid var(--success)', color:'#46c878',
+        padding:'9px 18px', borderRadius:'6px', fontSize:'.76rem',
+        zIndex:'9999', pointerEvents:'none', whiteSpace:'nowrap'
+      });
+      el.textContent = '획득한 아이템을 보관함에서 인벤토리로 이동했습니다';
+    }
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2500);
+  }
+
+  /* HUD */
+  function openHud(name) {
+    closeMod();
+    document.getElementById('hud').classList.add('on');
+    HUD_KEYS.forEach(k => {
+      document.getElementById('ht-' + k).classList.toggle('on', k === name);
+      document.getElementById('hp-' + k).classList.toggle('on', k === name);
+    });
+  }
+
+  function closeHud() {
+    document.getElementById('hud').classList.remove('on');
+    HUD_KEYS.forEach(k => {
+      document.getElementById('ht-' + k).classList.remove('on');
+      document.getElementById('hp-' + k).classList.remove('on');
+    });
+  }
+
+  /* Modal */
+  function openMod(id) {
+    closeHud();
+    document.getElementById('mod').classList.add('on');
+    document.querySelectorAll('.mbox').forEach(m => m.classList.remove('on'));
+    document.getElementById('m-' + id).classList.add('on');
+    if (id === 'dungeon') {
+      if (selectedPin) { selectedPin.classList.remove('sel'); selectedPin = null; }
+      document.getElementById('dmap-tip').textContent = '📍 던전 핀을 클릭해 선택하세요';
+      document.getElementById('dmap-enter-btn').style.display = 'none';
+    }
+  }
+
+  function closeMod() {
+    stopTimer();
+    document.getElementById('mod').classList.remove('on');
+    document.querySelectorAll('.mbox').forEach(m => m.classList.remove('on'));
+  }
+
+  /* Loadout selection */
+  function selLoadout(n) {
+    document.getElementById('lc1').classList.toggle('sel', n === 1);
+    document.getElementById('lc2').classList.toggle('sel', n === 2);
+  }
+
+  /* MM mode selection */
+  function selMM(n) {
+    [1,2].forEach(i => document.getElementById('mm'+i).classList.toggle('sel', i === n));
+  }
+
+  /* Matching timer */
+  function startMatch() {
+    openMod('matching');
+    mmSec = 0;
+    document.getElementById('mm-t').textContent = '00:00';
+    mmTimer = setInterval(() => {
+      mmSec++;
+      const m = String(Math.floor(mmSec / 60)).padStart(2,'0');
+      const s = String(mmSec % 60).padStart(2,'0');
+      document.getElementById('mm-t').textContent = m + ':' + s;
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (mmTimer) { clearInterval(mmTimer); mmTimer = null; }
+  }
+
+  function cancelMatch() {
+    stopTimer();
+    openMod('dungeon');
+  }
+
+  /* Dungeon map pin selection */
+  let selectedPin = null;
+  function selectDungeon(pin, name, riskCls, riskLabel, info) {
+    if (selectedPin) selectedPin.classList.remove('sel');
+    selectedPin = pin;
+    pin.classList.add('sel');
+    document.getElementById('dmap-tip').textContent = '✔ ' + name + ' · ' + riskLabel + ' — 입장 버튼을 눌러 계속';
+    const btn = document.getElementById('dmap-enter-btn');
+    btn.style.display = 'inline-block';
+  }
+
+  /* Squad */
+  let squadOn = true;
+  let squadSize = 2;
+  let randomSquad = false;
+
+  const SQUAD_DATA = {
+    1: [],
+    2: [{ name:'👑 Teammate_01 · Lv.23', filled: true }],
+    3: [{ name:'👑 Teammate_01 · Lv.23', filled: true }, { name:'Teammate_02 · Lv.31', filled: true }]
+  };
+
+  function makeCharPh(cls, renderText, nameTag, nameTagCls, lvTag, lvTagCls) {
+    const ph = document.createElement('div');
+    ph.className = cls;
+    const name = document.createElement('div');
+    name.className = nameTagCls;
+    name.textContent = nameTag;
+    const lv = document.createElement('div');
+    lv.className = lvTagCls;
+    lv.textContent = lvTag;
+    const inner = document.createElement('span');
+    inner.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#3a4870;';
+    inner.textContent = renderText;
+    ph.appendChild(name);
+    ph.appendChild(lv);
+    ph.appendChild(inner);
+    return ph;
+  }
+
+  function renderZoneC() {
+    const chars = document.getElementById('zc-chars');
+    chars.innerHTML = '';
+    const effectiveSize = squadOn ? squadSize : 1;
+    if (effectiveSize === 1) {
+      chars.appendChild(makeCharPh('char-ph', '3D 캐릭터 렌더', 'PlayerName', 'cn-tag', 'Lv.47', 'lv-tag'));
+    } else if (effectiveSize === 2) {
+      chars.appendChild(makeCharPh('char-ph-sm', '3D 렌더', '👑 Teammate_01', 'cn-tag-sm', 'Lv.23', 'lv-tag-sm'));
+      chars.appendChild(makeCharPh('char-ph', '3D 캐릭터 렌더', 'PlayerName', 'cn-tag', 'Lv.47', 'lv-tag'));
+    } else {
+      chars.appendChild(makeCharPh('char-ph-sm', '3D 렌더', '👑 Teammate_01', 'cn-tag-sm', 'Lv.23', 'lv-tag-sm'));
+      chars.appendChild(makeCharPh('char-ph', '3D 캐릭터 렌더', 'PlayerName', 'cn-tag', 'Lv.47', 'lv-tag'));
+      chars.appendChild(makeCharPh('char-ph-sm', '3D 렌더', 'Teammate_02', 'cn-tag-sm', 'Lv.31', 'lv-tag-sm'));
+    }
+  }
+
+  function renderSquad() {
+    const body = document.getElementById('sq-body');
+    const label = document.getElementById('sq-label');
+    const toggle = document.getElementById('sq-toggle');
+
+    if (!squadOn) {
+      body.style.display = 'none';
+      label.textContent = '스쿼드 OFF';
+      toggle.classList.add('off');
+    } else {
+      body.style.display = 'block';
+      label.textContent = '스쿼드 ON';
+      toggle.classList.remove('off');
+    }
+
+    [1,2,3].forEach(n => {
+      document.getElementById('ssz-' + n).classList.toggle('on', n === squadSize);
+    });
+
+    /* 랜덤 스쿼드 토글 — 솔로일 때는 숨김 */
+    const randRow = document.getElementById('sq-random-row');
+    const randLabel = document.getElementById('sq-rand-label');
+    const randToggle = document.getElementById('sq-rand-toggle');
+    if (!squadOn || squadSize === 1) {
+      randRow.style.display = 'none';
+      randomSquad = false;
+    } else {
+      randRow.style.display = 'flex';
+    }
+    randLabel.textContent = randomSquad ? '랜덤 스쿼드 ON' : '랜덤 스쿼드 OFF';
+    randToggle.classList.toggle('off', !randomSquad);
+
+    const container = document.getElementById('sq-slots');
+    container.innerHTML = '';
+    if (squadOn) {
+      const slots = SQUAD_DATA[squadSize];
+      if (slots.length === 0) {
+        const el = document.createElement('div');
+        el.className = 'sq-slot';
+        el.textContent = '솔로 플레이';
+        container.appendChild(el);
+      } else if (randomSquad) {
+        slots.forEach(() => {
+          const el = document.createElement('div');
+          el.className = 'sq-slot';
+          el.style.cssText = 'color:var(--accent);border-color:var(--accent-dim);border-style:dashed;';
+          el.textContent = '🔍 랜덤 매칭 대기 중...';
+          container.appendChild(el);
+        });
+      } else {
+        slots.forEach(s => {
+          const el = document.createElement('div');
+          el.className = 'sq-slot' + (s.filled ? ' ok' : '');
+          el.textContent = s.name;
+          container.appendChild(el);
+        });
+      }
+    }
+
+    renderZoneC();
+  }
+
+  function toggleSquad() {
+    squadOn = !squadOn;
+    renderSquad();
+  }
+
+  function setSquadSize(n) {
+    squadSize = n;
+    renderSquad();
+  }
+
+  function toggleRandomSquad() {
+    randomSquad = !randomSquad;
+    renderSquad();
+  }
+
+  /* ── Workshop ── */
+  const WF_INVENTORY = {
+    '고철 조각': 15, '철 스크랩': 25, '유기물': 2, '공구': 1,
+    '섬유': 8, '화학 약품': 3, '목재': 10, '잠금장치': 0,
+    '강화 부품': 3, '슬라임 에센스': 0, '특수 합금': 0,
+    '설계도': 0, '희귀 소재': 0, '방호 소재': 0,
+    '강화 소재': 2, '정제 약품': 0, '특수 성분': 0
+  };
+
+  const WF_DATA = {
+    slime: {
+      name: '애완슬라임', maxLv: 3, lv: -1, type: 'slime',
+      desc: '던전 플레이 후 은거지 귀환 시 자원을 임의로 수집해 옵니다. 레벨이 높을수록 더 많은 자원을 가져옵니다.',
+      openCost: [{mat:'고철 조각', amt:10}],
+      upgCost: [
+        [{mat:'철 스크랩', amt:5}, {mat:'유기물', amt:3}],
+        [{mat:'강화 부품', amt:8}, {mat:'슬라임 에센스', amt:2}]
+      ]
+    },
+    weapon: {
+      name: '무기 제작대', maxLv: 5, lv: -1, type: 'craft',
+      desc: '무기류 아이템을 제작할 수 있습니다. 레벨이 높을수록 더 다양한 레시피를 사용할 수 있습니다.',
+      openCost: [{mat:'철 스크랩', amt:15}, {mat:'공구', amt:3}],
+      upgCost: [
+        [{mat:'철 스크랩', amt:20}],
+        [{mat:'강화 부품', amt:10}],
+        [{mat:'특수 합금', amt:5}, {mat:'설계도', amt:1}],
+        [{mat:'희귀 소재', amt:8}]
+      ],
+      recipes: ['기본 소총', '산탄총', '저격소총', '권총', '나이프']
+    },
+    armor: {
+      name: '방어구 제작대', maxLv: 5, lv: -1, type: 'craft',
+      desc: '방어구 아이템을 제작할 수 있습니다. 레벨이 높을수록 더 강한 방어구를 제작할 수 있습니다.',
+      openCost: [{mat:'철 스크랩', amt:12}, {mat:'섬유', amt:5}],
+      upgCost: [
+        [{mat:'철 스크랩', amt:18}],
+        [{mat:'강화 부품', amt:8}],
+        [{mat:'특수 합금', amt:4}, {mat:'방호 소재', amt:2}],
+        [{mat:'희귀 소재', amt:6}]
+      ],
+      recipes: ['기본 헬멧', '방탄 조끼', '강화 장갑', '전술 신발', '방호 하의']
+    },
+    consumable: {
+      name: '소모품 제작대', maxLv: 5, lv: -1, type: 'craft',
+      desc: '소모품 및 잡화 아이템을 제작할 수 있습니다.',
+      openCost: [{mat:'유기물', amt:10}, {mat:'화학 약품', amt:2}],
+      upgCost: [
+        [{mat:'유기물', amt:15}],
+        [{mat:'강화 소재', amt:6}],
+        [{mat:'정제 약품', amt:4}, {mat:'특수 성분', amt:2}],
+        [{mat:'희귀 소재', amt:5}]
+      ],
+      recipes: ['응급 키트', '붕대', '자극제', '섬광 수류탄', '연막탄', '구급약']
+    },
+    recipe: {
+      name: '레시피 보관함', maxLv: 0, lv: -1, type: 'storage',
+      desc: '인게임 플레이에서 획득한 레시피가 자동으로 이곳으로 이동됩니다.',
+      openCost: [{mat:'목재', amt:5}, {mat:'잠금장치', amt:1}]
+    }
+  };
+  const WF_KEYS = ['slime','weapon','armor','consumable','recipe'];
+  let selectedFacility = 'slime';
+
+  function selectFacility(id) {
+    selectedFacility = id;
+    WF_KEYS.forEach(k => document.getElementById('wf-row-' + k).classList.toggle('on', k === id));
+    renderWfDetail();
+  }
+
+  function renderWfDetail() {
+    const d = WF_DATA[selectedFacility];
+    const el = document.getElementById('wf-detail');
+    el.innerHTML = '';
+
+    // header
+    const hdr = document.createElement('div');
+    hdr.className = 'wf-detail-hdr';
+    const nameEl = document.createElement('span');
+    nameEl.className = 'wf-detail-name';
+    nameEl.textContent = d.name;
+    hdr.appendChild(nameEl);
+    const badge = document.createElement('span');
+    if (d.lv < 0) {
+      badge.className = 'wf-badge locked'; badge.textContent = '미개방';
+    } else if (d.maxLv > 0 && d.lv >= d.maxLv) {
+      badge.className = 'wf-badge max'; badge.textContent = '최대 레벨';
+    } else if (d.maxLv === 0) {
+      badge.className = 'wf-badge open'; badge.textContent = '개방됨';
+    } else {
+      badge.className = 'wf-badge lv'; badge.textContent = 'Lv.' + d.lv;
+    }
+    hdr.appendChild(badge);
+    el.appendChild(hdr);
+
+    // desc
+    const desc = document.createElement('div');
+    desc.className = 'wf-desc';
+    desc.textContent = d.desc;
+    el.appendChild(desc);
+
+    if (d.lv < 0) {
+      // locked
+      const costBox = document.createElement('div');
+      costBox.className = 'wf-cost-box';
+      const openCostStr = d.openCost.map(c => c.mat + ' ×' + c.amt).join(' · ');
+      costBox.innerHTML = '<div class="wf-cost-label">개방 비용</div><div class="wf-cost-val">' + openCostStr + '</div>';
+      el.appendChild(costBox);
+      const openBtn = document.createElement('button');
+      openBtn.className = 'btn-p';
+      openBtn.style.cssText = 'font-size:.78rem;';
+      openBtn.textContent = '개방하기';
+      openBtn.onclick = () => openFacility(selectedFacility);
+      el.appendChild(openBtn);
+    } else {
+      if (d.type === 'slime') {
+        const s1 = document.createElement('div');
+        s1.className = 'wf-cost-box';
+        s1.innerHTML = '<div class="wf-cost-label">슬라임 상태</div><div class="wf-cost-val" style="color:#46c878">대기 중 — 다음 귀환 시 자원 수집 예정</div>';
+        el.appendChild(s1);
+        const s2 = document.createElement('div');
+        s2.className = 'wf-cost-box';
+        const lvPools = { 1:'고철 조각 · 유기물 · 목재 (랜덤)', 2:'고철 조각 · 철 스크랩 · 유기물 · 화학 약품 (랜덤)', 3:'철 스크랩 · 강화 부품 · 화학 약품 · 강화 소재 (랜덤)' };
+        s2.innerHTML = '<div class="wf-cost-label">수집 가능 자원 풀 (Lv.' + d.lv + ')</div><div class="wf-cost-val">' + (lvPools[d.lv] || '') + '</div>';
+        el.appendChild(s2);
+        const simBtn = document.createElement('button');
+        simBtn.style.cssText = 'margin-top:4px;padding:7px 14px;background:none;border:1px dashed #785040;border-radius:5px;color:#a07050;font-size:.72rem;cursor:pointer;';
+        simBtn.innerHTML = '<span style="color:#785040;margin-right:5px">[테스트]</span>귀환 시뮬레이션 — 자원 수집';
+        simBtn.onclick = () => simulateSlimeReturn(d.lv);
+        el.appendChild(simBtn);
+      } else if (d.type === 'craft') {
+        const rl = document.createElement('div');
+        rl.className = 'wf-section-label';
+        rl.textContent = '제작 가능 레시피';
+        el.appendChild(rl);
+        const list = document.createElement('div');
+        list.className = 'wf-recipe-list';
+        (d.recipes || []).forEach(r => {
+          const row = document.createElement('div');
+          row.className = 'wf-recipe-row';
+          row.textContent = r;
+          list.appendChild(row);
+        });
+        el.appendChild(list);
+      } else if (d.type === 'storage') {
+        const rl = document.createElement('div');
+        rl.className = 'wf-section-label';
+        rl.textContent = '보유 레시피';
+        el.appendChild(rl);
+        const empty = document.createElement('div');
+        empty.className = 'hbig';
+        empty.style.minHeight = '80px';
+        empty.textContent = '보유한 레시피가 없습니다 — 던전에서 레시피를 획득하세요';
+        el.appendChild(empty);
+      }
+
+      // upgrade section
+      if (d.type !== 'storage' && d.maxLv > 0) {
+        const upgBox = document.createElement('div');
+        upgBox.className = 'wf-upg-box';
+        const isMax = d.lv >= d.maxLv;
+        if (isMax) {
+          upgBox.innerHTML = '<div class="wf-upg-title">업그레이드</div><div style="font-size:.72rem;color:#d4b830">✦ 최대 레벨 달성</div>';
+        } else {
+          const costs = d.upgCost[d.lv - 1] || [];
+          const costStr = costs.map(c => c.mat + ' ×' + c.amt).join(' · ');
+          upgBox.innerHTML = '<div class="wf-upg-title">업그레이드</div><div style="font-size:.68rem;color:var(--muted);margin-bottom:8px">Lv.' + d.lv + ' → Lv.' + (d.lv + 1) + ' &nbsp;·&nbsp; 필요 재료: <span style="color:var(--text)">' + costStr + '</span></div>';
+          const upgBtn = document.createElement('button');
+          upgBtn.className = 'btn-p';
+          upgBtn.style.fontSize = '.76rem';
+          upgBtn.textContent = 'Lv.' + (d.lv + 1) + '로 업그레이드';
+          upgBtn.onclick = () => openUpgradeModal(selectedFacility);
+          upgBox.appendChild(upgBtn);
+        }
+        el.appendChild(upgBox);
+      }
+    }
+  }
+
+  function openFacility(id) {
+    WF_DATA[id].lv = (WF_DATA[id].maxLv === 0) ? 0 : 1;
+    renderWorkshopSidebar();
+    renderWfDetail();
+  }
+
+  /* ── Slime resource collection ── */
+  const SLIME_POOL = {
+    1: ['고철 조각', '유기물', '목재'],
+    2: ['고철 조각', '철 스크랩', '유기물', '화학 약품'],
+    3: ['철 스크랩', '강화 부품', '화학 약품', '강화 소재']
+  };
+
+  function simulateSlimeReturn(lv) {
+    const pool = SLIME_POOL[lv] || SLIME_POOL[1];
+    const count = lv === 1 ? 2 : lv === 2 ? 3 : 4;
+    const shuffled = pool.slice().sort(() => Math.random() - 0.5);
+    const picked = shuffled.slice(0, Math.min(count, pool.length));
+    const results = picked.map(mat => ({ mat, amt: Math.floor(Math.random() * 4) + 1 }));
+
+    const body = document.getElementById('slime-collect-body');
+    body.innerHTML = '';
+
+    const note = document.createElement('div');
+    note.style.cssText = 'font-size:.72rem;color:var(--muted);margin-bottom:12px;';
+    note.textContent = '슬라임이 던전 귀환 중 수집한 자원 목록입니다.';
+    body.appendChild(note);
+
+    results.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'wfu-mat-row';
+      row.innerHTML = '<span style="color:var(--text)">' + r.mat + '</span><span style="color:#46c878;font-weight:600">+' + r.amt + '</span>';
+      body.appendChild(row);
+    });
+
+    openMod('slime-collect');
+  }
+
+  function closeSlimeCollect() {
+    closeMod();
+    openHud('workshop');
+  }
+
+  let pendingUpgradeFacility = null;
+
+  function openUpgradeModal(id) {
+    pendingUpgradeFacility = id;
+    const d = WF_DATA[id];
+    const costs = d.upgCost[d.lv - 1] || [];
+    document.getElementById('wfu-title').textContent = d.name + ' 업그레이드 — Lv.' + d.lv + ' → Lv.' + (d.lv + 1);
+    renderUpgradeMaterials(costs);
+    openMod('wf-upgrade');
+  }
+
+  function renderUpgradeMaterials(costsArg) {
+    const d = pendingUpgradeFacility ? WF_DATA[pendingUpgradeFacility] : null;
+    if (!d) return;
+    const costs = costsArg || d.upgCost[d.lv - 1] || [];
+    const simOk = document.getElementById('sim-mat-ok') && document.getElementById('sim-mat-ok').checked;
+
+    const body = document.getElementById('wfu-body');
+    // preserve sim row if already rendered, otherwise build from scratch
+    const existingSimRow = document.getElementById('wfu-sim-row');
+    body.innerHTML = '';
+
+    const label = document.createElement('div');
+    label.style.cssText = 'font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;';
+    label.textContent = '필요 재료';
+    body.appendChild(label);
+
+    // header row
+    const hrow = document.createElement('div');
+    hrow.style.cssText = 'display:flex;justify-content:space-between;font-size:.62rem;color:var(--muted);padding:0 10px;margin-bottom:4px;';
+    hrow.innerHTML = '<span>재료</span><span>보유 / 필요</span>';
+    body.appendChild(hrow);
+
+    let allOk = true;
+    costs.forEach(c => {
+      const owned = simOk ? c.amt : (WF_INVENTORY[c.mat] || 0);
+      const ok = owned >= c.amt;
+      if (!ok) allOk = false;
+      const row = document.createElement('div');
+      row.className = 'wfu-mat-row';
+      row.innerHTML = '<span>' + c.mat + '</span><span class="' + (ok ? 'wfu-ok' : 'wfu-ng') + '">' + owned + ' / ' + c.amt + '</span>';
+      body.appendChild(row);
+    });
+
+    // test checkbox
+    const simRow = document.createElement('div');
+    simRow.id = 'wfu-sim-row';
+    simRow.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:.65rem;color:var(--muted);margin-top:12px;';
+    simRow.innerHTML = '<span style="color:#785040;letter-spacing:.04em">[테스트]</span><label style="display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="sim-mat-ok" style="accent-color:var(--success)"' + (simOk ? ' checked' : '') + ' onchange="renderUpgradeMaterials()"> 재료 충분 시뮬레이션</label>';
+    body.appendChild(simRow);
+
+    const confirmBtn = document.getElementById('wfu-confirm-btn');
+    if (allOk || simOk) {
+      confirmBtn.disabled = false;
+      confirmBtn.style.opacity = '';
+      confirmBtn.style.cursor = '';
+    } else {
+      confirmBtn.disabled = true;
+      confirmBtn.style.opacity = '0.4';
+      confirmBtn.style.cursor = 'not-allowed';
+    }
+  }
+
+  function confirmUpgrade() {
+    const d = WF_DATA[pendingUpgradeFacility];
+    if (d && d.lv < d.maxLv) d.lv++;
+    closeMod();
+    openHud('workshop');
+    renderWorkshopSidebar();
+    renderWfDetail();
+  }
+
+  function closeUpgradeModal() {
+    closeMod();
+    openHud('workshop');
+  }
+
+  function renderWorkshopSidebar() {
+    WF_KEYS.forEach(k => {
+      const d = WF_DATA[k];
+      const badge = document.getElementById('wf-badge-' + k);
+      if (!badge) return;
+      if (d.lv < 0) {
+        badge.className = 'wf-badge locked'; badge.textContent = '미개방';
+      } else if (d.maxLv > 0 && d.lv >= d.maxLv) {
+        badge.className = 'wf-badge max'; badge.textContent = '최대';
+      } else if (d.maxLv === 0) {
+        badge.className = 'wf-badge open'; badge.textContent = '개방됨';
+      } else {
+        badge.className = 'wf-badge lv'; badge.textContent = 'Lv.' + d.lv;
+      }
+    });
+  }
+
+  /* Unimplemented toast */
+  function unimpl() {
+    const el = document.createElement('div');
+    el.textContent = '구현 예정 — 현재 미지원 항목입니다';
+    Object.assign(el.style, {
+      position:'fixed', bottom:'28px', left:'50%', transform:'translateX(-50%)',
+      background:'#1e0e0a', border:'1px solid var(--unimpl)', color:'#d07060',
+      padding:'9px 18px', borderRadius:'6px', fontSize:'.76rem',
+      zIndex:'9999', pointerEvents:'none', whiteSpace:'nowrap'
+    });
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2000);
+  }
+
+  /* ── 보관함 상태 ── */
+  let invSlots = 60;
+  let invExpCount = 0;
+  let simGold = 12340;
+  const INV_EXP_ADD = 24;
+  const INV_EXP_BASE_COST = 1000;
+  const INV_EXP_COST_STEP = 500;
+
+  function invExpCost() {
+    return INV_EXP_BASE_COST + invExpCount * INV_EXP_COST_STEP;
+  }
+
+  function fmtNum(n) {
+    return n.toLocaleString('ko-KR');
+  }
+
+  /* 보관함 그리드 렌더 */
+  function renderInvGrid() {
+    const grid = document.getElementById('inv-grid');
+    if (!grid) return;
+    const cur = grid.children.length;
+    for (let i = cur; i < invSlots; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'inv-slot';
+      slot.dataset.idx = i;
+      grid.appendChild(slot);
+    }
+    const label = document.getElementById('inv-count-label');
+    if (label) label.textContent = invSlots + '칸';
+  }
+
+  function initInvGrid() {
+    renderInvGrid();
+  }
+
+  /* 보관함 확장 모달 */
+  function openInvExpand() {
+    refreshExpandModal();
+    openMod('inv-expand');
+  }
+
+  function refreshExpandModal() {
+    const cost = invExpCost();
+    const simOk = document.getElementById('sim-gold-ok') && document.getElementById('sim-gold-ok').checked;
+    const canAfford = simOk || simGold >= cost;
+
+    document.getElementById('exp-cur-slots').textContent = invSlots + '칸';
+    document.getElementById('exp-new-slots').textContent = (invSlots + INV_EXP_ADD) + '칸 (+' + INV_EXP_ADD + ')';
+    document.getElementById('exp-cost-val').textContent = fmtNum(cost) + ' G';
+    document.getElementById('exp-gold-val').textContent = fmtNum(simOk ? cost : simGold) + ' G';
+    document.getElementById('exp-gold-val').className = canAfford ? 'exp-ok' : 'exp-ng';
+
+    const btn = document.getElementById('exp-confirm-btn');
+    btn.disabled = !canAfford;
+    btn.style.opacity = canAfford ? '1' : '0.4';
+  }
+
+  function confirmInvExpand() {
+    const cost = invExpCost();
+    const simOk = document.getElementById('sim-gold-ok').checked;
+    if (!simOk) simGold -= cost;
+    invSlots += INV_EXP_ADD;
+    invExpCount++;
+    renderInvGrid();
+    closeMod();
+    openHud('equipment');
+    // 확장 완료 토스트
+    const el = document.createElement('div');
+    el.textContent = '✔ 보관함이 ' + invSlots + '칸으로 확장됐습니다';
+    Object.assign(el.style, {
+      position:'fixed', bottom:'28px', left:'50%', transform:'translateX(-50%)',
+      background:'#0a1e12', border:'1px solid #46c878', color:'#46c878',
+      padding:'9px 18px', borderRadius:'6px', fontSize:'.76rem',
+      zIndex:'9999', pointerEvents:'none', whiteSpace:'nowrap'
+    });
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+  }
+
+  function closeExpand() {
+    closeMod();
+    openHud('equipment');
+  }
+
+  /* ── 배낭 데이터 ── */
+  const BAG_TYPES = {
+    none:   { name: '장착 없음',    cols: 4, rows: 0,  desc: '장착 없음' },
+    small:  { name: '기본 배낭',    cols: 4, rows: 2,  desc: '4×2 · 8칸' },
+    medium: { name: '중형 배낭',    cols: 4, rows: 3,  desc: '4×3 · 12칸' },
+    large:  { name: '대형 배낭',    cols: 4, rows: 4,  desc: '4×4 · 16칸' },
+    xl:     { name: '특대형 배낭',  cols: 4, rows: 5,  desc: '4×5 · 20칸' },
+  };
+  let currentBag = 'small';
+
+  function renderBagGrid() {
+    const bag = BAG_TYPES[currentBag];
+    const grid = document.getElementById('bag-grid');
+    const label = document.getElementById('bag-slots-label');
+    const nameEl = document.getElementById('eq-bag-name');
+    const emptyMsg = document.getElementById('bag-empty-msg');
+    if (!grid) return;
+
+    if (nameEl) nameEl.textContent = bag.name;
+
+    if (bag.rows === 0) {
+      grid.style.display = 'none';
+      if (emptyMsg) emptyMsg.style.display = 'flex';
+      if (label) label.textContent = bag.desc;
+      return;
+    }
+
+    grid.style.display = 'grid';
+    if (emptyMsg) emptyMsg.style.display = 'none';
+    if (label) label.textContent = bag.desc;
+
+    grid.innerHTML = '';
+    const total = bag.cols * bag.rows;
+    for (let i = 0; i < total; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'bag-slot';
+      grid.appendChild(slot);
+    }
+  }
+
+  function changeBag(type, btn) {
+    currentBag = type;
+    document.querySelectorAll('.bag-test-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    renderBagGrid();
+  }
+
+  /* 필터링 버튼 */
+  function setInvFilter(type, btn) {
+    document.querySelectorAll('.inv-filter-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    // 와이어프레임 — 실제 필터링 없이 버튼 상태만 전환
+  }
+
+  /* Init */
+  showPage('char');
+  renderSquad();
+  renderWfDetail();
+  initInvGrid();
+  renderBagGrid();
+</script>
+</body>
+</html>

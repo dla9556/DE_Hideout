@@ -1,0 +1,7 @@
+# Playwright MCP 캐시
+.playwright-mcp/
+
+# 임시/복사본 파일
+structure - 복사본.html
+*복사본*
+*.bak
