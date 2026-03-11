@@ -631,7 +631,7 @@
       { from:'n-hub', to:'n-merchant-scene', label:'상인 탭',   color:'#ffa000', type:'hub-scene' },
       { from:'n-hub', to:'n-growth-scene',   label:'성장 탭',   color:'#66bb6a', type:'hub-scene' },
       { from:'n-hub', to:'n-growthtree',     label:'닉네임·Lv',color:'#ab47bc', type:'hub-scene' },
-      { from:'n-hub', to:'n-equipment',      label:'인벤토리',  color:'#00bcd4', type:'hub-scene' },
+      { from:'n-hub', to:'n-equipment',      label:'ZONE-E 인벤토리',  color:'#00bcd4', type:'hub-scene' },
       { from:'n-hub', to:'n-workshop',       label:'작업장',    color:'#ff8f00', type:'hub-scene' },
       { from:'n-hub', to:'n-settings',       label:'설정',      color:'#78909c', type:'hub-scene' },
       // 하단 탭 간 직접 이동 (수평 레일)
@@ -695,7 +695,7 @@
 
       } else if (conn.type === 'down-rect') {
         const x1 = f.cx + 10, y1 = f.bottom + 4;
-        const x2 = t.cx - 10, y2 = t.bottom + 4;
+        const x2 = t.cx - 60, y2 = t.bottom + 4;
         const bottomY = H - 28;
         const midX = (x1 + x2) / 2;
         const lbl = conn.label;
