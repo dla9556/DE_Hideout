@@ -19,7 +19,7 @@ flowchart TD
     HUB -->|상인 탭| MERCHANT["상인 (HUD 오버레이)"]
     HUB -->|성장 탭| GROWTH["성장 (HUD 오버레이)"]
     HUB -->|성장 트리 탭| GROWTHTREE["성장 트리 (HUD 오버레이)"]
-    HUB -->|ZONE-E 인벤토리| LOADOUT["로드아웃 & 장비 (HUD 오버레이)"]
+    HUB -->|ZONE-E 인벤토리| LOADOUT["인벤토리 (HUD 오버레이)"]
     HUB -->|작업장 탭| WORKSHOP["작업장 (HUD 오버레이)"]
     HUB -->|설정 탭| SETTINGS["설정 (HUD 오버레이)"]
     HUB -->|플레이 버튼| PLAY_FLOW
@@ -55,7 +55,7 @@ flowchart TD
 | 상인 | ZONE-A 상인 탭 | HUD 오버레이 |
 | 성장 | ZONE-A 성장 탭 | HUD 오버레이 |
 | 성장 트리 | ZONE-A 성장 트리 탭 / 닉네임+Lv 클릭 | HUD 오버레이 |
-| 로드아웃 & 장비 | ZONE-E 인벤토리 버튼 | HUD 오버레이 |
+| 인벤토리 | ZONE-E 인벤토리 버튼 | HUD 오버레이 |
 | 작업장 | ZONE-A 작업장 탭 | HUD 오버레이 |
 | 설정 | ZONE-A 설정 탭 | HUD 오버레이 |
 | 인게임 | 매치 성공 후 로딩 | 씬 전환 |
@@ -104,7 +104,7 @@ flowchart LR
     end
 
     subgraph ZONE_E["ZONE-E  하단 탭 바 (항상 표시, z-index 최상위)"]
-        E1["인벤토리\n→ 로드아웃 & 장비 (HUD 오버레이)"]
+        E1["인벤토리\n→ 인벤토리 (HUD 오버레이)"]
         E2["캐릭터 변경\n→ 캐릭터 선택 화면"]
         E3["친구 [미구현]\n→ 안내 메시지"]
     end
@@ -197,7 +197,7 @@ flowchart LR
 
 ---
 
-## 6. 로드아웃 & 장비 HUD 패널
+## 6. 인벤토리 HUD 패널
 
 진입: ZONE-E 인벤토리 버튼 → HUD 오버레이
 
