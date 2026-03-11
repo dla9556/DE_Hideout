@@ -1,6 +1,6 @@
 # D&E 아웃게임 프로젝트
 
-> 기획 기준일: 2026-03-09 | 기획서 원본: `Dosc/설정파일. md`
+> 기획 기준일: 2026-03-09 | 기획서 원본: `Dosc/design-spec.md`
 
 ## 프로젝트 개요
 
@@ -121,7 +121,7 @@ interface Region {
 
 ## 개발 규칙
 
-- Zone 레이아웃 변경 시 기획서(`Dosc/설정파일. md`) 먼저 확인
+- Zone 레이아웃 변경 시 기획서(`Dosc/design-spec.md`) 먼저 확인
 - 데이터 필드명은 기획서의 camelCase 명명 규칙 준수 (`regionId`, `dangerLevel`, `playerCountRange` 등)
 - 미구현 기능은 UI는 배치하되 기능은 '구현 예정 안내' 토스트/모달로 처리
 - 매치메이킹 상태 enum: `IDLE` / `SEARCHING` / `FOUND` / `CANCELLED`
