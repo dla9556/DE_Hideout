@@ -347,7 +347,21 @@
     /* Facility detail */
     #wf-facility { width: 100%; min-height: 480px; overflow: hidden; display: flex; }
     #wf-fac-left { flex: 1; overflow-y: auto; padding: 16px 20px; position: relative; display: flex; flex-direction: column; min-height: 480px; }
-    #wf-fac-glow { position: absolute; inset: 0; pointer-events: none; opacity: .07; border-radius: 0; }
+    #wf-fac-glow { display: none; }
+    #wf-fac-bg-art { position: absolute; inset: 0; pointer-events: none; z-index: 0; transition: background .4s; }
+    /* 제작 패널 */
+    #wf-craft-panel { width: 210px; flex-shrink: 0; overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,.3); border-left: 1px solid var(--border); }
+    .wcp-hdr { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; padding-bottom: 9px; border-bottom: 1px solid var(--border); margin-bottom: 2px; flex-shrink: 0; }
+    .wcp-rname { font-size: .84rem; font-weight: 700; color: var(--text); flex-shrink: 0; }
+    .wcp-section { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-top: 6px; flex-shrink: 0; }
+    .wcp-mat-row { display: flex; align-items: center; justify-content: space-between; padding: 5px 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg3); font-size: .7rem; }
+    .wcp-qty-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .wcp-qty-btn { width: 28px; height: 28px; border: 1px solid var(--border-hi); border-radius: 4px; background: var(--bg3); color: var(--text); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; line-height: 1; }
+    .wcp-qty-btn:hover { background: var(--bg2); border-color: var(--accent); }
+    #wcp-qty-val { font-size: .9rem; font-weight: 700; min-width: 28px; text-align: center; flex-shrink: 0; }
+    .wcp-total { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+    .wcp-craft-btn { margin-top: auto; }
+    .wf-recipe-row.on { border-color: var(--accent); background: rgba(74,124,240,.1); color: var(--text); }
     .wf-fac-back { display: inline-flex; align-items: center; gap: 5px; font-size: .7rem; color: var(--muted); cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; transition: color .15s; flex-shrink: 0; }
     .wf-fac-back:hover { color: var(--text); }
     #wf-fac-content { position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1; }
@@ -651,9 +665,23 @@
               <div class="wf-nav-title">다른 시설</div>
             </div>
             <div id="wf-fac-left">
-              <div id="wf-fac-glow"></div>
+              <div id="wf-fac-bg-art"></div>
               <button class="wf-fac-back" onclick="showAlley()">← 공방 골목으로</button>
               <div id="wf-fac-content"></div>
+            </div>
+            <div id="wf-craft-panel" style="display:none">
+              <div class="wcp-hdr">제작</div>
+              <div id="wcp-rname" class="wcp-rname"></div>
+              <div class="wcp-section">필요 재료</div>
+              <div id="wcp-mats"></div>
+              <div class="wcp-section">수량</div>
+              <div class="wcp-qty-row">
+                <button class="wcp-qty-btn" onclick="wfQtyAdj(-1)">−</button>
+                <span id="wcp-qty-val">1</span>
+                <button class="wcp-qty-btn" onclick="wfQtyAdj(1)">+</button>
+              </div>
+              <div id="wcp-total" class="wcp-total"></div>
+              <button class="btn-p wcp-craft-btn" onclick="wfCraft()">제작하기</button>
             </div>
           </div>
         </div>
@@ -1336,16 +1364,60 @@
   };
   const WF_KEYS = ['workbench','slime','weapon','armor','consumable','scroll','tinkerer','altar','synthesis','recipe'];
   const WF_META = {
-    workbench:  { icon: '🔨', color: '#c07820' },
-    slime:      { icon: '🐸', color: '#20b840' },
-    weapon:     { icon: '⚔️',  color: '#6090d0' },
-    armor:      { icon: '🛡️',  color: '#8090a8' },
-    consumable: { icon: '🧪', color: '#a040d0' },
-    scroll:     { icon: '📜', color: '#5040d0' },
-    tinkerer:   { icon: '🔧', color: '#c06020' },
-    altar:      { icon: '✨', color: '#d0c040' },
-    synthesis:  { icon: '⚗️',  color: '#20c0c0' },
-    recipe:     { icon: '📚', color: '#c0a840' }
+    workbench:  { icon:'🔨', color:'#c07820',
+      bg:'radial-gradient(ellipse 80% 45% at 50% 100%,rgba(200,110,20,.32) 0%,transparent 58%),repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0,rgba(255,255,255,.012) 1px,transparent 1px,transparent 9px),linear-gradient(180deg,#0d0a04 0%,#181008 45%,#110c06 100%)' },
+    slime:      { icon:'🐸', color:'#20b840',
+      bg:'radial-gradient(circle 55% at 30% 75%,rgba(20,180,60,.22) 0%,transparent 50%),radial-gradient(circle 40% at 72% 55%,rgba(40,220,80,.14) 0%,transparent 45%),radial-gradient(circle 20% at 55% 35%,rgba(100,255,120,.08) 0%,transparent 40%),linear-gradient(180deg,#030808 0%,#060e0a 45%,#040a08 100%)' },
+    weapon:     { icon:'⚔️', color:'#e05020',
+      bg:'radial-gradient(ellipse 70% 50% at 50% 100%,rgba(240,80,10,.38) 0%,transparent 52%),radial-gradient(ellipse 40% 25% at 50% 100%,rgba(255,180,40,.22) 0%,transparent 38%),radial-gradient(ellipse 90% 20% at 50% 100%,rgba(180,40,10,.15) 0%,transparent 35%),linear-gradient(180deg,#0e0502 0%,#160806 45%,#0e0604 100%)' },
+    armor:      { icon:'🛡️', color:'#8090a8',
+      bg:'radial-gradient(ellipse 80% 40% at 50% 95%,rgba(80,110,180,.2) 0%,transparent 55%),repeating-linear-gradient(45deg,rgba(255,255,255,.008) 0,rgba(255,255,255,.008) 1px,transparent 1px,transparent 8px),linear-gradient(180deg,#06080e 0%,#0a0e16 45%,#080c12 100%)' },
+    consumable: { icon:'🧪', color:'#a040d0',
+      bg:'radial-gradient(circle 45% at 25% 70%,rgba(80,200,60,.18) 0%,transparent 48%),radial-gradient(circle 50% at 75% 55%,rgba(160,40,220,.22) 0%,transparent 48%),radial-gradient(circle 30% at 50% 30%,rgba(100,200,120,.1) 0%,transparent 42%),linear-gradient(180deg,#080410 0%,#0e0818 45%,#08060e 100%)' },
+    scroll:     { icon:'📜', color:'#7060e0',
+      bg:'radial-gradient(ellipse 60% 60% at 50% 20%,rgba(120,80,255,.22) 0%,transparent 58%),radial-gradient(ellipse 40% 30% at 50% 5%,rgba(180,140,255,.15) 0%,transparent 45%),repeating-linear-gradient(90deg,rgba(100,80,200,.02) 0,rgba(100,80,200,.02) 1px,transparent 1px,transparent 40px),linear-gradient(180deg,#06040c 0%,#0c0a16 45%,#08060e 100%)' },
+    tinkerer:   { icon:'🔧', color:'#c06020',
+      bg:'radial-gradient(ellipse 70% 40% at 50% 95%,rgba(180,80,20,.28) 0%,transparent 55%),repeating-linear-gradient(45deg,rgba(255,255,255,.01) 0,rgba(255,255,255,.01) 1px,transparent 1px,transparent 6px),linear-gradient(180deg,#0c0804 0%,#140e06 45%,#0e0a04 100%)' },
+    altar:      { icon:'✨', color:'#d8c050',
+      bg:'radial-gradient(ellipse 60% 80% at 50% 50%,rgba(220,190,60,.18) 0%,transparent 60%),radial-gradient(ellipse 30% 30% at 50% 40%,rgba(255,240,120,.12) 0%,transparent 50%),radial-gradient(ellipse 80% 30% at 50% 100%,rgba(180,140,40,.2) 0%,transparent 45%),linear-gradient(180deg,#0c0a04 0%,#16140a 45%,#100e06 100%)' },
+    synthesis:  { icon:'⚗️', color:'#20c0c0',
+      bg:'radial-gradient(ellipse 70% 60% at 50% 60%,rgba(20,200,200,.2) 0%,transparent 55%),radial-gradient(circle 30% at 30% 40%,rgba(40,180,220,.14) 0%,transparent 45%),radial-gradient(circle 30% at 70% 70%,rgba(20,220,180,.12) 0%,transparent 45%),linear-gradient(180deg,#020a0c 0%,#060e10 45%,#04090e 100%)' },
+    recipe:     { icon:'📚', color:'#c0a840',
+      bg:'radial-gradient(ellipse 80% 40% at 50% 95%,rgba(180,140,50,.24) 0%,transparent 55%),repeating-linear-gradient(0deg,rgba(255,255,255,.01) 0,rgba(255,255,255,.01) 1px,transparent 1px,transparent 12px),linear-gradient(180deg,#0a0804 0%,#141008 45%,#0e0c06 100%)' }
+  };
+
+  const RECIPE_MATS = {
+    '기초 부품':        [{mat:'목재',amt:2},{mat:'고철 조각',amt:1}],
+    '간단한 도구':      [{mat:'목재',amt:3},{mat:'고철 조각',amt:2}],
+    '기본 재료':        [{mat:'목재',amt:1},{mat:'유기물',amt:2}],
+    '기본 소총':        [{mat:'철 스크랩',amt:8},{mat:'강화 부품',amt:2},{mat:'공구',amt:1}],
+    '산탄총':           [{mat:'철 스크랩',amt:6},{mat:'강화 부품',amt:3},{mat:'목재',amt:2}],
+    '저격소총':         [{mat:'철 스크랩',amt:12},{mat:'특수 합금',amt:3},{mat:'강화 부품',amt:4}],
+    '권총':             [{mat:'철 스크랩',amt:4},{mat:'강화 부품',amt:1}],
+    '나이프':           [{mat:'철 스크랩',amt:3},{mat:'가죽',amt:1}],
+    '기본 헬멧':        [{mat:'철 스크랩',amt:5},{mat:'섬유',amt:2}],
+    '방탄 조끼':        [{mat:'철 스크랩',amt:8},{mat:'섬유',amt:4},{mat:'강화 부품',amt:2}],
+    '강화 장갑':        [{mat:'철 스크랩',amt:4},{mat:'섬유',amt:3}],
+    '전술 신발':        [{mat:'섬유',amt:5},{mat:'고무',amt:2}],
+    '방호 하의':        [{mat:'섬유',amt:6},{mat:'강화 부품',amt:1}],
+    '응급 키트':        [{mat:'유기물',amt:3},{mat:'화학 약품',amt:1}],
+    '붕대':             [{mat:'섬유',amt:2},{mat:'유기물',amt:1}],
+    '자극제':           [{mat:'화학 약품',amt:2},{mat:'유기물',amt:2}],
+    '섬광 수류탄':      [{mat:'철 스크랩',amt:2},{mat:'화학 약품',amt:2}],
+    '연막탄':           [{mat:'철 스크랩',amt:2},{mat:'화학 약품',amt:3}],
+    '구급약':           [{mat:'유기물',amt:4},{mat:'화학 약품',amt:2},{mat:'정제 약품',amt:1}],
+    '강화 주문서':      [{mat:'설계도',amt:1},{mat:'희귀 소재',amt:2}],
+    '수리 주문서':      [{mat:'설계도',amt:1},{mat:'철 스크랩',amt:3}],
+    '속성 부여 주문서': [{mat:'설계도',amt:2},{mat:'희귀 소재',amt:3},{mat:'특수 성분',amt:1}],
+    '장비 수리':        [{mat:'철 스크랩',amt:3},{mat:'공구',amt:1}],
+    '부품 개조':        [{mat:'강화 부품',amt:2},{mat:'공구',amt:2}],
+    '튜닝':             [{mat:'특수 합금',amt:2},{mat:'공구',amt:3}],
+    '아이템 정화':      [{mat:'정제 약품',amt:2},{mat:'유기물',amt:1}],
+    '저주 해제':        [{mat:'정제 약품',amt:3},{mat:'희귀 소재',amt:1}],
+    '기운 정제':        [{mat:'정제 약품',amt:4},{mat:'특수 성분',amt:2}],
+    '아이템 합성':      [{mat:'희귀 소재',amt:3},{mat:'강화 소재',amt:2}],
+    '장비 강화 합성':   [{mat:'희귀 소재',amt:5},{mat:'특수 합금',amt:2}],
+    '특수 합성':        [{mat:'희귀 소재',amt:8},{mat:'특수 성분',amt:4},{mat:'강화 부품',amt:3}]
   };
   let selectedFacility = 'workbench';
 
@@ -1448,8 +1520,8 @@
   function renderFacilityDetail() {
     const d = WF_DATA[selectedFacility];
     const m = WF_META[selectedFacility];
-    document.getElementById('wf-fac-glow').style.background =
-      'radial-gradient(ellipse at 50% 15%, ' + m.color + ' 0%, transparent 70%)';
+    document.getElementById('wf-fac-bg-art').style.background = m.bg;
+    document.getElementById('wf-craft-panel').style.display = 'none';
     const el = document.getElementById('wf-fac-content');
     el.innerHTML = '';
 
@@ -1523,6 +1595,7 @@
           const row = document.createElement('div');
           row.className = 'wf-recipe-row';
           row.textContent = r;
+          row.onclick = () => openCraftPanel(r, row, list);
           list.appendChild(row);
         });
         el.appendChild(list);
@@ -1682,6 +1755,55 @@
     closeMod();
     openHud('workshop');
     enterFacility(selectedFacility);
+  }
+
+  /* ── 제작 패널 ── */
+  let craftQty = 1;
+  let craftRecipe = null;
+
+  function openCraftPanel(recipeName, rowEl, listEl) {
+    craftRecipe = recipeName;
+    craftQty = 1;
+    // 선택 강조
+    listEl.querySelectorAll('.wf-recipe-row').forEach(r => r.classList.remove('on'));
+    rowEl.classList.add('on');
+    // 패널 표시
+    const panel = document.getElementById('wf-craft-panel');
+    panel.style.display = 'flex';
+    document.getElementById('wcp-rname').textContent = recipeName;
+    document.getElementById('wcp-qty-val').textContent = '1';
+    renderCraftMats();
+  }
+
+  function renderCraftMats() {
+    const mats = RECIPE_MATS[craftRecipe] || [];
+    const matsEl = document.getElementById('wcp-mats');
+    matsEl.innerHTML = '';
+    mats.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'wcp-mat-row';
+      row.innerHTML = '<span>' + m.mat + '</span><span style="color:var(--accent);font-weight:600">' + (m.amt * craftQty) + '</span>';
+      matsEl.appendChild(row);
+    });
+    const total = document.getElementById('wcp-total');
+    total.textContent = mats.length ? '총 재료 × ' + craftQty + '개 기준' : '';
+  }
+
+  function wfQtyAdj(delta) {
+    craftQty = Math.max(1, Math.min(99, craftQty + delta));
+    document.getElementById('wcp-qty-val').textContent = craftQty;
+    renderCraftMats();
+  }
+
+  function wfCraft() {
+    const panel = document.getElementById('wf-craft-panel');
+    const btn = panel.querySelector('.wcp-craft-btn');
+    btn.textContent = '✓ 제작 완료';
+    btn.style.background = 'var(--success)';
+    setTimeout(() => {
+      btn.textContent = '제작하기';
+      btn.style.background = '';
+    }, 1800);
   }
 
   /* Unimplemented toast */
