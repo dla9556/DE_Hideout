@@ -851,7 +851,7 @@
 
 <script>
   const BC = { 'char':'캐릭터 선택', 'hub':'메인 허브', 'ig':'인게임', 'res':'결과창' };
-  const HUD_KEYS = ['merchant','growth','growthtree','workshop','settings'];
+  const HUD_KEYS = ['merchant','growth','growthtree','workshop','settings','equipment'];
 
   let mmTimer = null;
   let mmSec = 0;
@@ -914,7 +914,8 @@
     closeMod();
     document.getElementById('hud').classList.add('on');
     HUD_KEYS.forEach(k => {
-      document.getElementById('ht-' + k).classList.toggle('on', k === name);
+      const tab = document.getElementById('ht-' + k);
+      if (tab) tab.classList.toggle('on', k === name);
       document.getElementById('hp-' + k).classList.toggle('on', k === name);
     });
   }
@@ -922,7 +923,8 @@
   function closeHud() {
     document.getElementById('hud').classList.remove('on');
     HUD_KEYS.forEach(k => {
-      document.getElementById('ht-' + k).classList.remove('on');
+      const tab = document.getElementById('ht-' + k);
+      if (tab) tab.classList.remove('on');
       document.getElementById('hp-' + k).classList.remove('on');
     });
   }
