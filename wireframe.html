@@ -630,6 +630,7 @@
       <div class="mbox" id="m-dungeon-detail">
         <div class="mhdr">
           <span class="mtitle">오염된 공장 — 던전 상세</span>
+          <button class="btn-s" onclick="openMod('dungeon')">던전 선택으로 돌아가기</button>
         </div>
         <div class="mbody" style="display:flex;gap:16px">
           <div style="flex:1;border:1px dashed var(--border-hi);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.7rem;min-height:160px">던전 미리보기</div>
@@ -647,7 +648,7 @@
           </div>
         </div>
         <div class="mfoot">
-          <button class="btn-s" onclick="openMod('dungeon')">던전 선택으로 돌아가기</button>
+          <button class="btn-s" onclick="openMod('dungeon')">← 목록으로</button>
           <button class="btn-p" onclick="openMod('loadout-sel')">이 던전으로 선택 →</button>
         </div>
       </div>
@@ -656,6 +657,7 @@
       <div class="mbox wide" id="m-loadout-sel">
         <div class="mhdr">
           <span class="mtitle">로드아웃 선택</span>
+          <button class="btn-s" onclick="openMod('dungeon')">던전 선택으로 돌아가기</button>
         </div>
         <div class="mbody">
           <div class="lgrid">
@@ -682,7 +684,7 @@
           </div>
         </div>
         <div class="mfoot">
-          <button class="btn-s" onclick="openMod('dungeon')">던전 선택으로 돌아가기</button>
+          <button class="btn-s" onclick="openMod('dungeon-detail')">← 이전</button>
           <button class="btn-p" onclick="openMod('matchmaking')">확인 →</button>
         </div>
       </div>
@@ -691,6 +693,7 @@
       <div class="mbox sm" id="m-matchmaking">
         <div class="mhdr">
           <span class="mtitle">매치메이킹</span>
+          <button class="btn-s" onclick="openMod('dungeon')">던전 선택으로 돌아가기</button>
         </div>
         <div class="mbody">
           <div class="mm-cards">
@@ -706,7 +709,7 @@
           <div class="mm-info">파티원: 👑 Teammate_01 &nbsp;<span style="color:#46c878">READY</span></div>
         </div>
         <div class="mfoot">
-          <button class="btn-s" onclick="openMod('dungeon')">던전 선택으로 돌아가기</button>
+          <button class="btn-s" onclick="openMod('loadout-sel')">← 이전</button>
           <button class="btn-p" onclick="startMatch()">매치 시작 ▶</button>
         </div>
       </div>
