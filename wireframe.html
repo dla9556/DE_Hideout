@@ -2744,26 +2744,9 @@
 
     if (nameEl) nameEl.textContent = bag.name;
 
-    if (bag.rows === 0) {
-      grid.style.display = 'none';
-      if (emptyMsg) emptyMsg.style.display = 'flex';
-      if (label) label.textContent = bag.desc;
-      return;
-    }
-
-    grid.style.display = 'grid';
-    if (emptyMsg) emptyMsg.style.display = 'none';
     if (label) label.textContent = bag.desc;
 
-    grid.innerHTML = '';
-    const total = bag.cols * bag.rows;
-    for (let i = 0; i < total; i++) {
-      const slot = document.createElement('div');
-      slot.className = 'bag-slot';
-      grid.appendChild(slot);
-    }
-
-    // 안전 가방 슬롯
+    // 안전 가방 슬롯 (항상 실행)
     const safeSection = document.getElementById('safe-bag-section');
     const safeGrid = document.getElementById('safe-bag-grid');
     const safeLabel = document.getElementById('safe-bag-label');
@@ -2779,6 +2762,23 @@
           safeGrid.appendChild(s);
         }
       }
+    }
+
+    if (bag.rows === 0) {
+      grid.style.display = 'none';
+      if (emptyMsg) emptyMsg.style.display = 'flex';
+      return;
+    }
+
+    grid.style.display = 'grid';
+    if (emptyMsg) emptyMsg.style.display = 'none';
+
+    grid.innerHTML = '';
+    const total = bag.cols * bag.rows;
+    for (let i = 0; i < total; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'bag-slot';
+      grid.appendChild(slot);
     }
   }
 
