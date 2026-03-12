@@ -952,7 +952,7 @@
               <div class="bag-grid" id="bag-grid"></div>
               <div class="bag-empty" id="bag-empty-msg" style="display:none">배낭이 장착되지 않았습니다</div>
               <!-- 안전 가방 슬롯 -->
-              <div class="safe-bag-section" id="safe-bag-section" style="display:none">
+              <div class="safe-bag-section" id="safe-bag-section">
                 <div class="safe-bag-hdr">🔒 안전 가방 <span style="font-weight:400;color:var(--muted);font-size:.65rem" id="safe-bag-label">1칸</span></div>
                 <div class="safe-bag-grid" id="safe-bag-grid"></div>
               </div>
@@ -2768,18 +2768,16 @@
     const safeGrid = document.getElementById('safe-bag-grid');
     const safeLabel = document.getElementById('safe-bag-label');
     if (safeSection && safeGrid) {
+      safeSection.style.display = 'block';
+      if (safeLabel) safeLabel.textContent = bag.safeSlots + '칸';
+      safeGrid.innerHTML = '';
       if (bag.safeSlots > 0) {
-        safeSection.style.display = 'block';
-        if (safeLabel) safeLabel.textContent = bag.safeSlots + '칸';
         safeGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
-        safeGrid.innerHTML = '';
         for (let i = 0; i < bag.safeSlots; i++) {
           const s = document.createElement('div');
           s.className = 'safe-bag-slot';
           safeGrid.appendChild(s);
         }
-      } else {
-        safeSection.style.display = 'none';
       }
     }
   }
