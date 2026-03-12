@@ -366,6 +366,116 @@
     .wfu-mat-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg3); margin-bottom: 5px; font-size: .74rem; }
     .wfu-ok { color: #46c878; font-weight: 600; }
     .wfu-ng { color: #f07070; font-weight: 600; }
+
+    /* ══ MERCHANT ALLEY ══ */
+    #hp-merchant.on { overflow: hidden; padding: 0; min-height: 520px; }
+    #mc-alley { width: 100%; min-height: 520px; position: relative; overflow: hidden; background: #010103; }
+    #mc-alley-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    .mc-alley-name { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 5; text-align: center; pointer-events: none; white-space: nowrap; }
+    .mc-alley-title { font-size: .76rem; font-weight: 700; color: #b080d8; letter-spacing: .14em; text-shadow: 0 0 14px rgba(180,80,220,0.55); }
+    .mc-alley-sub { font-size: .52rem; color: #5a3070; letter-spacing: .16em; text-transform: uppercase; margin-top: 3px; }
+    #mc-alley-stalls { position: absolute; inset: 0; z-index: 2; }
+    /* 상인 스탠드 */
+    .mc-stall {
+      position: absolute; cursor: pointer;
+      transition: box-shadow .22s, border-color .22s, background .22s;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      border-radius: 2px 2px 0 0;
+      border: 2px solid #3a2055; border-bottom-width: 3px;
+      background: linear-gradient(180deg, #1a1028 0%, #110c1e 60%, #0d0914 100%);
+      box-shadow: inset 0 1px 0 rgba(180,80,255,0.06), 0 4px 14px rgba(0,0,0,0.78);
+    }
+    .mc-stall:hover { border-color: #9040c8; z-index: 10; box-shadow: 0 0 24px rgba(160,60,220,0.38), 0 4px 16px rgba(0,0,0,0.68); background: linear-gradient(180deg, #221438 0%, #18102c 60%, #100c1e 100%); }
+    .mc-stall-awning {
+      width: 110%; margin-left: -5%; padding: 5px 8px 4px;
+      background: repeating-linear-gradient(45deg, #3a1858 0, #3a1858 6px, #2a1040 6px, #2a1040 12px);
+      border-bottom: 2px solid #6030a8;
+      font-size: .54rem; color: #c890e8; letter-spacing: .06em; text-transform: uppercase;
+      flex-shrink: 0; white-space: nowrap; overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.62); border-radius: 1px 1px 0 0;
+    }
+    .mc-stall-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 6px 6px 5px; width: 100%; }
+    .mc-stall-icon { font-size: 1.3rem; line-height: 1; filter: drop-shadow(0 0 6px rgba(180,80,255,0.38)); }
+    .mc-stall-name { font-size: .56rem; font-weight: 600; color: #c090e0; line-height: 1.2; }
+    /* 텐트 변형 */
+    .tent-weapon .mc-stall-awning { background: repeating-linear-gradient(45deg, #541818 0, #541818 6px, #3a1010 6px, #3a1010 12px); border-color: #a03030; }
+    .tent-armor .mc-stall-awning { background: repeating-linear-gradient(45deg, #182040 0, #182040 6px, #101828 6px, #101828 12px); border-color: #3060a0; }
+    .tent-consumable .mc-stall-awning { background: repeating-linear-gradient(45deg, #183820 0, #183820 6px, #102018 6px, #102018 12px); border-color: #30a050; }
+    .tent-magic .mc-stall-awning { background: repeating-linear-gradient(45deg, #381858 0, #381858 6px, #281040 6px, #281040 12px); border-color: #8030d0; }
+    .tent-black { border-color: #801020; background: linear-gradient(180deg, #1a0818 0%, #120610 60%, #0e0408 100%); }
+    .tent-black .mc-stall-awning { background: repeating-linear-gradient(45deg, #3a0c10 0, #3a0c10 6px, #200608 6px, #200608 12px); border-color: #a01020; }
+    .tent-black:hover { border-color: #d01830; box-shadow: 0 0 22px rgba(200,20,50,0.32), 0 4px 16px rgba(0,0,0,0.68); }
+    .tent-special { border-color: #706020; background: linear-gradient(180deg, #1e1808 0%, #161208 60%, #100e06 100%); }
+    .tent-special .mc-stall-awning { background: repeating-linear-gradient(45deg, #4a3808 0, #4a3808 6px, #342a08 6px, #342a08 12px); border-color: #c09020; }
+    .tent-special:hover { border-color: #e0b030; box-shadow: 0 0 22px rgba(220,170,40,0.3), 0 4px 16px rgba(0,0,0,0.68); }
+    /* NPC */
+    .mc-stall-npc { font-size: .9rem; display: block; line-height: 1; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8)); }
+    .mc-npc-1 { animation: mcNpcWalk 2.2s ease-in-out infinite alternate; }
+    .mc-npc-2 { animation: mcNpcWalk 3.1s ease-in-out infinite alternate; }
+    .mc-npc-3 { animation: mcNpcWalk 1.8s ease-in-out infinite alternate; }
+    .mc-npc-4 { animation: mcNpcWalk 2.7s ease-in-out infinite alternate; }
+    .mc-npc-5 { animation: mcNpcWalk 2.4s ease-in-out infinite alternate; }
+    .mc-npc-6 { animation: mcNpcWalk 3.4s ease-in-out infinite alternate; }
+    .mc-npc-7 { animation: mcNpcWalk 1.9s ease-in-out infinite alternate; }
+    @keyframes mcNpcWalk { from { transform: translateX(-8px) scaleX(1); } to { transform: translateX(8px) scaleX(-1); } }
+    /* 가스등 깜박임 */
+    .mc-gl1 { animation: mcGL 2.6s ease-in-out infinite alternate; }
+    .mc-gl2 { animation: mcGL 3.4s ease-in-out infinite alternate; }
+    .mc-gl3 { animation: mcGL 2.0s ease-in-out infinite alternate; }
+    .mc-gl4 { animation: mcGL 2.9s ease-in-out infinite alternate; }
+    @keyframes mcGL { from { opacity: .35; } to { opacity: .70; } }
+    /* 상인 상세 뷰 */
+    #mc-merchant-view { width: 100%; min-height: 480px; display: flex; }
+    #mc-mer-nav { width: 185px; flex-shrink: 0; overflow-y: auto; padding: 12px 8px; display: flex; flex-direction: column; gap: 3px; background: rgba(0,0,0,.25); border-right: 1px solid #2a1050; }
+    #mc-mer-left { flex: 1; overflow-y: auto; padding: 16px 20px; position: relative; display: flex; flex-direction: column; min-height: 480px; }
+    #mc-mer-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; transition: background .4s; }
+    .mc-mer-back { display: inline-flex; align-items: center; gap: 5px; font-size: .7rem; color: var(--muted); cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; transition: color .15s; flex-shrink: 0; position: relative; z-index: 1; }
+    .mc-mer-back:hover { color: var(--text); }
+    #mc-mer-content { position: relative; z-index: 1; }
+    /* 상인 NPC (상세 뷰) */
+    .mc-mer-npc { position: absolute; bottom: 16px; right: 20px; font-size: 2.8rem; z-index: 1; pointer-events: none; filter: drop-shadow(0 0 14px rgba(180,80,255,0.45)); animation: mcNpcBob 2.4s ease-in-out infinite alternate; }
+    @keyframes mcNpcBob { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+    /* 아이템 그리드 (4열) */
+    .mc-item-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .mc-item-card { background: rgba(0,0,0,.45); border: 1px solid #2a1050; border-radius: 6px; padding: 10px 8px; cursor: pointer; text-align: center; transition: border-color .15s, background .15s; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .mc-item-card:hover { border-color: #8040c0; background: rgba(80,20,120,.18); }
+    .mc-item-card.sel { border-color: #9050d8; background: rgba(90,30,140,.22); }
+    .mc-item-icon { font-size: 1.5rem; line-height: 1; }
+    .mc-item-name { font-size: .62rem; font-weight: 600; color: #c090e0; line-height: 1.2; }
+    .mc-item-price { font-size: .6rem; color: #8888cc; }
+    /* 구매 패널 */
+    #mc-buy-panel { width: 210px; flex-shrink: 0; overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,.3); border-left: 1px solid #2a1050; }
+    .mbp-hdr { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; padding-bottom: 9px; border-bottom: 1px solid #2a1050; margin-bottom: 2px; }
+    .mbp-icon { font-size: 2rem; text-align: center; margin: 4px 0; }
+    .mbp-iname { font-size: .84rem; font-weight: 700; color: var(--text); }
+    .mbp-desc { font-size: .68rem; color: var(--muted); line-height: 1.5; }
+    .mbp-price-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; border: 1px solid #2a1050; border-radius: 4px; background: rgba(0,0,0,.3); font-size: .72rem; }
+    .mbp-qty-row { display: flex; align-items: center; gap: 8px; }
+    .mbp-qty-btn { width: 28px; height: 28px; border: 1px solid var(--border-hi); border-radius: 4px; background: var(--bg3); color: var(--text); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; transition: background .15s; }
+    .mbp-qty-btn:hover { background: var(--bg2); border-color: #8040c0; }
+    .mbp-buy-btn { margin-top: 10px; position: relative; overflow: hidden; user-select: none; -webkit-user-select: none; }
+    .mbp-buy-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .mbp-hold-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(255,255,255,0.18); pointer-events: none; }
+    /* 사전 확인 팝업 */
+    #mc-buy-confirm { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+    .mbc-box { background: var(--bg2); border: 1px solid #4a2070; border-radius: 8px; padding: 22px 28px; min-width: 240px; text-align: center; box-shadow: 0 10px 36px rgba(0,0,0,.72); }
+    .mbc-title { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+    .mbc-item { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .mbc-price { font-size: .8rem; color: #8888cc; margin-bottom: 16px; }
+    .mbc-btns { display: flex; gap: 8px; justify-content: center; }
+    /* Hold-to-buy 모달 */
+    #mc-hold-modal { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+    .mhm-box { background: var(--bg2); border: 1px solid #4a2070; border-radius: 8px; padding: 22px 28px; min-width: 240px; text-align: center; box-shadow: 0 10px 36px rgba(0,0,0,.72); display: flex; flex-direction: column; gap: 10px; }
+    .mhm-lbl { font-size: .72rem; color: var(--muted); }
+    .mhm-btn { position: relative; overflow: hidden; user-select: none; -webkit-user-select: none; }
+    .mhm-hold-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(255,255,255,0.2); pointer-events: none; }
+    /* 구매 완료 확인창 */
+    #mc-buy-result { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+    .mbr-box { background: var(--bg2); border: 1px solid #4a2070; border-radius: 8px; padding: 26px 32px; min-width: 220px; text-align: center; box-shadow: 0 10px 36px rgba(0,0,0,.72); }
+    .mbr-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .mbr-label { font-size: .58rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+    .mbr-item-name { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .mbr-item-qty { font-size: .78rem; color: #8888cc; margin-bottom: 18px; }
   </style>
 </head>
 <body>
@@ -504,25 +614,238 @@
 
         <!-- 교환소/상인 -->
         <div class="hpanel" id="hp-merchant">
-          <div class="hsec" style="max-width:240px">
-            <div class="hsec-t">카테고리</div>
-            <div class="hrow">🛍 잡화 상인</div>
-            <div class="hrow">🗡 무기 상인</div>
-            <div class="hrow">🛡 방어구 상인</div>
-            <div class="hrow">🧪 소비 아이템</div>
-            <div class="hrow">🔮 마법 도구 상인</div>
-            <div class="hrow">💀 암시장 상인</div>
-            <div class="hrow">💎 특수 아이템</div>
+          <!-- 암거래 골목 뷰 -->
+          <div id="mc-alley">
+            <svg id="mc-alley-svg" viewBox="0 0 900 520" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="mcVP" cx="47%" cy="19%" r="42%">
+                  <stop offset="0%" stop-color="#8828c8" stop-opacity="0.48"/>
+                  <stop offset="50%" stop-color="#401080" stop-opacity="0.12"/>
+                  <stop offset="100%" stop-color="#010103" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="mcFog" cx="50%" cy="100%" r="55%">
+                  <stop offset="0%" stop-color="#010103" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#010103" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="mcVign" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#010103" stop-opacity="0.72"/>
+                  <stop offset="18%" stop-color="#010103" stop-opacity="0"/>
+                  <stop offset="82%" stop-color="#010103" stop-opacity="0"/>
+                  <stop offset="100%" stop-color="#010103" stop-opacity="0.88"/>
+                </linearGradient>
+                <linearGradient id="mcLW" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#0e0818"/><stop offset="100%" stop-color="#080510"/>
+                </linearGradient>
+                <linearGradient id="mcRW" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#080510"/><stop offset="100%" stop-color="#0e0818"/>
+                </linearGradient>
+                <radialGradient id="mcGG" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#40ff70" stop-opacity="0.82"/>
+                  <stop offset="55%" stop-color="#70c828" stop-opacity="0.22"/>
+                  <stop offset="100%" stop-color="#182808" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <!-- 배경 -->
+              <rect width="900" height="520" fill="#010103"/>
+              <!-- 왼쪽 벽면 -->
+              <polygon points="0,0 390,0 423,100 0,520" fill="url(#mcLW)"/>
+              <!-- 오른쪽 벽면 -->
+              <polygon points="510,0 900,0 900,520 423,100" fill="url(#mcRW)"/>
+              <!-- 천장 -->
+              <polygon points="0,0 900,0 510,0 423,100 390,0" fill="#040208"/>
+              <!-- 바닥 -->
+              <polygon points="0,520 900,520 423,100" fill="#060408"/>
+              <!-- 왼쪽 벽 수평 석판선 -->
+              <line x1="0" y1="28" x2="392" y2="28" stroke="#1c0e2c" stroke-width="0.8" opacity="0.6"/>
+              <line x1="0" y1="56" x2="394" y2="56" stroke="#1c0e2c" stroke-width="0.8" opacity="0.54"/>
+              <line x1="0" y1="84" x2="395" y2="84" stroke="#1c0e2c" stroke-width="0.8" opacity="0.48"/>
+              <line x1="0" y1="122" x2="340" y2="122" stroke="#1c0e2c" stroke-width="0.7" opacity="0.44"/>
+              <line x1="0" y1="175" x2="265" y2="175" stroke="#1c0e2c" stroke-width="0.7" opacity="0.38"/>
+              <line x1="0" y1="250" x2="185" y2="250" stroke="#1c0e2c" stroke-width="0.7" opacity="0.32"/>
+              <line x1="0" y1="350" x2="110" y2="350" stroke="#1c0e2c" stroke-width="0.6" opacity="0.26"/>
+              <line x1="0" y1="448" x2="48" y2="448" stroke="#1c0e2c" stroke-width="0.6" opacity="0.20"/>
+              <!-- 왼쪽 벽 수직선 (소실점 수렴) -->
+              <line x1="55" y1="0" x2="425" y2="100" stroke="#1c0e2c" stroke-width="0.6" opacity="0.28"/>
+              <line x1="140" y1="0" x2="424" y2="100" stroke="#1c0e2c" stroke-width="0.6" opacity="0.22"/>
+              <line x1="228" y1="0" x2="424" y2="100" stroke="#1c0e2c" stroke-width="0.6" opacity="0.18"/>
+              <line x1="316" y1="0" x2="424" y2="100" stroke="#1c0e2c" stroke-width="0.6" opacity="0.15"/>
+              <!-- 오른쪽 벽 수평선 -->
+              <line x1="900" y1="28" x2="508" y2="28" stroke="#1c0e2c" stroke-width="0.8" opacity="0.6"/>
+              <line x1="900" y1="56" x2="506" y2="56" stroke="#1c0e2c" stroke-width="0.8" opacity="0.54"/>
+              <line x1="900" y1="84" x2="505" y2="84" stroke="#1c0e2c" stroke-width="0.8" opacity="0.48"/>
+              <line x1="900" y1="122" x2="560" y2="122" stroke="#1c0e2c" stroke-width="0.7" opacity="0.44"/>
+              <line x1="900" y1="175" x2="635" y2="175" stroke="#1c0e2c" stroke-width="0.7" opacity="0.38"/>
+              <line x1="900" y1="250" x2="715" y2="250" stroke="#1c0e2c" stroke-width="0.7" opacity="0.32"/>
+              <line x1="900" y1="350" x2="790" y2="350" stroke="#1c0e2c" stroke-width="0.6" opacity="0.26"/>
+              <line x1="900" y1="448" x2="852" y2="448" stroke="#1c0e2c" stroke-width="0.6" opacity="0.20"/>
+              <!-- 오른쪽 벽 수직선 -->
+              <line x1="845" y1="0" x2="421" y2="100" stroke="#1c0e2c" stroke-width="0.6" opacity="0.28"/>
+              <line x1="760" y1="0" x2="422" y2="100" stroke="#1c0e2c" stroke-width="0.6" opacity="0.22"/>
+              <line x1="672" y1="0" x2="422" y2="100" stroke="#1c0e2c" stroke-width="0.6" opacity="0.18"/>
+              <line x1="584" y1="0" x2="422" y2="100" stroke="#1c0e2c" stroke-width="0.6" opacity="0.15"/>
+              <!-- 바닥 원근 방사선 -->
+              <line x1="0" y1="520" x2="423" y2="100" stroke="#0e0618" stroke-width="1" opacity="0.45"/>
+              <line x1="225" y1="520" x2="423" y2="100" stroke="#0e0618" stroke-width="0.8" opacity="0.35"/>
+              <line x1="450" y1="520" x2="423" y2="100" stroke="#0e0618" stroke-width="0.8" opacity="0.35"/>
+              <line x1="675" y1="520" x2="423" y2="100" stroke="#0e0618" stroke-width="0.8" opacity="0.35"/>
+              <line x1="900" y1="520" x2="423" y2="100" stroke="#0e0618" stroke-width="1" opacity="0.45"/>
+              <!-- 바닥 수평선 -->
+              <line x1="5" y1="432" x2="895" y2="432" stroke="#0e0618" stroke-width="0.8" opacity="0.40"/>
+              <line x1="28" y1="352" x2="872" y2="352" stroke="#0e0618" stroke-width="0.7" opacity="0.34"/>
+              <line x1="70" y1="284" x2="830" y2="284" stroke="#0e0618" stroke-width="0.7" opacity="0.28"/>
+              <line x1="135" y1="228" x2="765" y2="228" stroke="#0e0618" stroke-width="0.6" opacity="0.24"/>
+              <line x1="225" y1="184" x2="675" y2="184" stroke="#0e0618" stroke-width="0.6" opacity="0.18"/>
+              <!-- 소실점 글로우 (보라) -->
+              <rect width="900" height="520" fill="url(#mcVP)"/>
+              <!-- 가스등 — 왼쪽 상단 -->
+              <rect x="54" y="88" width="22" height="5" rx="2" fill="#180828"/>
+              <ellipse cx="65" cy="85" rx="30" ry="30" fill="url(#mcGG)" opacity="0.50" class="mc-gl1"/>
+              <circle cx="65" cy="85" r="4.5" fill="#30ff60" opacity="0.88"/>
+              <circle cx="65" cy="85" r="2.5" fill="#c0ffc0" opacity="0.92"/>
+              <!-- 가스등 — 왼쪽 하단 -->
+              <rect x="24" y="272" width="18" height="4" rx="2" fill="#180828"/>
+              <ellipse cx="33" cy="270" rx="22" ry="22" fill="url(#mcGG)" opacity="0.42" class="mc-gl2"/>
+              <circle cx="33" cy="270" r="3.5" fill="#30ff60" opacity="0.78"/>
+              <circle cx="33" cy="270" r="2" fill="#c0ffc0" opacity="0.85"/>
+              <!-- 가스등 — 오른쪽 상단 -->
+              <rect x="824" y="88" width="22" height="5" rx="2" fill="#180828"/>
+              <ellipse cx="835" cy="85" rx="30" ry="30" fill="url(#mcGG)" opacity="0.50" class="mc-gl3"/>
+              <circle cx="835" cy="85" r="4.5" fill="#30ff60" opacity="0.88"/>
+              <circle cx="835" cy="85" r="2.5" fill="#c0ffc0" opacity="0.92"/>
+              <!-- 가스등 — 오른쪽 하단 -->
+              <rect x="858" y="272" width="18" height="4" rx="2" fill="#180828"/>
+              <ellipse cx="867" cy="270" rx="22" ry="22" fill="url(#mcGG)" opacity="0.42" class="mc-gl4"/>
+              <circle cx="867" cy="270" r="3.5" fill="#30ff60" opacity="0.78"/>
+              <circle cx="867" cy="270" r="2" fill="#c0ffc0" opacity="0.85"/>
+              <!-- 중앙 천장 보라 랜턴 -->
+              <line x1="423" y1="0" x2="423" y2="52" stroke="#2a0848" stroke-width="2.5"/>
+              <line x1="413" y1="12" x2="433" y2="12" stroke="#2a0848" stroke-width="1.5"/>
+              <rect x="408" y="52" width="30" height="36" rx="3" fill="#180828" stroke="#4a1878" stroke-width="1.5"/>
+              <rect x="413" y="57" width="20" height="26" rx="1" fill="#c040e0" opacity="0.18"/>
+              <ellipse cx="423" cy="52" rx="15" ry="5" fill="#200840"/>
+              <ellipse cx="423" cy="88" rx="15" ry="5" fill="#200840"/>
+              <ellipse cx="423" cy="88" rx="42" ry="30" fill="#a020d0" opacity="0.10"/>
+              <!-- 천장 체인 1 (왼쪽) -->
+              <path d="M180,0 Q174,35 178,65 Q182,95 176,125" stroke="#281040" stroke-width="1.5" fill="none" opacity="0.52"/>
+              <!-- 천장 체인 2 (오른쪽) -->
+              <path d="M720,0 Q726,35 722,65 Q718,95 724,125" stroke="#281040" stroke-width="1.5" fill="none" opacity="0.52"/>
+              <!-- 수배 포스터 1 (왼쪽 벽 상단) -->
+              <rect x="130" y="36" width="48" height="60" rx="2" fill="#1a1008" stroke="#3c2010" stroke-width="1"/>
+              <rect x="134" y="40" width="40" height="32" fill="#2a1e10" rx="1"/>
+              <rect x="134" y="75" width="40" height="5" fill="#1e1408" rx="1"/>
+              <rect x="134" y="82" width="28" height="4" fill="#1e1408" rx="1"/>
+              <rect x="134" y="88" width="20" height="3" fill="#1e1408" rx="1"/>
+              <text x="153" y="32" font-size="7" fill="#904820" text-anchor="middle" font-family="sans-serif" opacity="0.9">수배</text>
+              <!-- 수배 포스터 2 (왼쪽 벽 하단) -->
+              <rect x="56" y="168" width="40" height="50" rx="2" fill="#1a1008" stroke="#3c2010" stroke-width="1"/>
+              <rect x="60" y="172" width="32" height="24" fill="#2a1e10" rx="1"/>
+              <rect x="60" y="199" width="32" height="4" fill="#1e1408" rx="1"/>
+              <rect x="60" y="205" width="22" height="3" fill="#1e1408" rx="1"/>
+              <text x="76" y="164" font-size="6" fill="#904820" text-anchor="middle" font-family="sans-serif" opacity="0.88">수배</text>
+              <!-- 의심스러운 인물 1 (소실점 왼쪽) -->
+              <ellipse cx="382" cy="116" rx="7" ry="9" fill="#0e0818" opacity="0.82"/>
+              <ellipse cx="382" cy="109" rx="5" ry="5" fill="#0e0814" opacity="0.82"/>
+              <path d="M375,105 Q382,96 389,105 Q386,116 382,118 Q378,116 375,105Z" fill="#0a0810" opacity="0.72"/>
+              <!-- 의심스러운 인물 2 (소실점 오른쪽) -->
+              <ellipse cx="466" cy="118" rx="7" ry="9" fill="#0e0818" opacity="0.78"/>
+              <ellipse cx="466" cy="111" rx="5" ry="5" fill="#0e0814" opacity="0.78"/>
+              <path d="M459,107 Q466,98 473,107 Q470,118 466,120 Q462,118 459,107Z" fill="#0a0810" opacity="0.70"/>
+              <!-- 밀수품 상자/통 — 왼쪽 바닥 -->
+              <ellipse cx="88" cy="488" rx="27" ry="10" fill="#1e0c30" opacity="0.88"/>
+              <rect x="61" y="450" width="54" height="38" rx="4" fill="#160828" opacity="0.88"/>
+              <line x1="61" y1="465" x2="115" y2="465" stroke="#2a0e40" stroke-width="1.5" opacity="0.65"/>
+              <line x1="61" y1="478" x2="115" y2="478" stroke="#2a0e40" stroke-width="1.5" opacity="0.65"/>
+              <ellipse cx="88" cy="450" rx="27" ry="9" fill="#220e38" opacity="0.88"/>
+              <ellipse cx="122" cy="492" rx="18" ry="7" fill="#1c0828" opacity="0.65"/>
+              <rect x="104" y="464" width="36" height="28" rx="3" fill="#140620" opacity="0.65"/>
+              <ellipse cx="122" cy="464" rx="18" ry="6" fill="#1e0a2e" opacity="0.65"/>
+              <!-- 밀수품 상자/통 — 오른쪽 바닥 -->
+              <rect x="772" y="452" width="52" height="42" rx="2" fill="#160824" opacity="0.82"/>
+              <line x1="772" y1="473" x2="824" y2="473" stroke="#2a0e3c" stroke-width="1.5" opacity="0.55"/>
+              <line x1="798" y1="452" x2="798" y2="494" stroke="#2a0e3c" stroke-width="1.5" opacity="0.55"/>
+              <rect x="796" y="444" width="42" height="34" rx="2" fill="#120618" opacity="0.65"/>
+              <!-- 하단 보라 안개 -->
+              <rect x="0" y="345" width="900" height="175" fill="url(#mcFog)"/>
+              <!-- 비네트 -->
+              <rect width="900" height="520" fill="url(#mcVign)"/>
+            </svg>
+            <!-- 골목 이름 -->
+            <div class="mc-alley-name">
+              <div class="mc-alley-title">암거래 골목</div>
+              <div class="mc-alley-sub">상인 노점을 클릭하여 입장</div>
+            </div>
+            <!-- 상인 스탠드 (자유 배치) -->
+            <div id="mc-alley-stalls"></div>
           </div>
-          <div class="hsec">
-            <div class="hsec-t">아이템 목록</div>
-            <div class="hbig">아이템 그리드 (6×4)</div>
+          <!-- 상인 상세 뷰 -->
+          <div id="mc-merchant-view" style="display:none">
+            <div id="mc-mer-nav">
+              <div class="wf-nav-title">다른 상인</div>
+            </div>
+            <div id="mc-mer-left">
+              <div id="mc-mer-bg"></div>
+              <button class="mc-mer-back" onclick="showMcAlley()">← 교환소 골목으로</button>
+              <div id="mc-mer-content"></div>
+            </div>
+            <div id="mc-buy-panel" style="display:none">
+              <div class="mbp-hdr">구매</div>
+              <div id="mbp-icon" class="mbp-icon"></div>
+              <div id="mbp-iname" class="mbp-iname"></div>
+              <div id="mbp-desc" class="mbp-desc"></div>
+              <div class="mbp-price-row">
+                <span style="color:var(--muted)">단가</span>
+                <span id="mbp-unit-price" style="color:#c090e0;font-weight:600"></span>
+              </div>
+              <div class="wcp-section">수량</div>
+              <div class="mbp-qty-row">
+                <button class="mbp-qty-btn" onclick="mcQtyAdj(-1)">−</button>
+                <span id="mbp-qty-val" style="font-size:.9rem;font-weight:700;min-width:28px;text-align:center;flex-shrink:0">1</span>
+                <button class="mbp-qty-btn" onclick="mcQtyAdj(1)">+</button>
+              </div>
+              <div class="mbp-price-row">
+                <span style="color:var(--muted)">합계</span>
+                <span id="mbp-total-price" style="color:#c090e0;font-weight:700"></span>
+              </div>
+              <div id="mbp-balance-row" style="font-size:.62rem;color:var(--muted);padding:3px 0"></div>
+              <button class="btn-p mbp-buy-btn" id="mbp-buy-btn" onclick="showMerchantBuyConfirm()">
+                구매하기
+              </button>
+            </div>
           </div>
-          <div class="hsec" style="max-width:220px">
-            <div class="hsec-t">아이템 상세</div>
-            <div class="hbig" style="min-height:100px;margin-bottom:8px">미리보기</div>
-            <div class="hrow" style="cursor:pointer">구매</div>
-            <div class="hrow" style="cursor:pointer">판매</div>
+          <!-- 사전 확인 팝업 -->
+          <div id="mc-buy-confirm" style="display:none">
+            <div class="mbc-box">
+              <div class="mbc-title">정말 구매하시겠습니까?</div>
+              <div id="mbc-item" class="mbc-item"></div>
+              <div id="mbc-price" class="mbc-price"></div>
+              <div class="mbc-btns">
+                <button class="btn-s" onclick="cancelMcConfirm()">취소</button>
+                <button class="btn-p" onclick="proceedToHoldBuy()">확인</button>
+              </div>
+            </div>
+          </div>
+          <!-- Hold-to-buy 모달 -->
+          <div id="mc-hold-modal" style="display:none">
+            <div class="mhm-box">
+              <div class="mhm-lbl">버튼을 1초간 눌러 구매를 완료하세요</div>
+              <button class="btn-p mhm-btn" id="mhm-btn"
+                onmousedown="startBuyHold(event)" onmouseup="cancelBuyHold()" onmouseleave="cancelBuyHold()"
+                ontouchstart="startBuyHold(event)" ontouchend="cancelBuyHold()">
+                <span class="mhm-hold-bar" id="mhm-hold-bar"></span>
+                꾸욱 눌러 구매
+              </button>
+              <button class="btn-s" onclick="cancelHoldModal()">취소</button>
+            </div>
+          </div>
+          <!-- 구매 완료 확인창 -->
+          <div id="mc-buy-result" style="display:none">
+            <div class="mbr-box">
+              <div class="mbr-icon" id="mbr-icon">🛍</div>
+              <div class="mbr-label">구매 완료</div>
+              <div class="mbr-item-name" id="mbr-item-name"></div>
+              <div class="mbr-item-qty" id="mbr-item-qty"></div>
+              <button class="btn-p" style="padding:7px 24px" onclick="closeBuyResult()">확인</button>
+            </div>
           </div>
         </div>
 
@@ -1183,6 +1506,7 @@
       document.getElementById('hp-' + k).classList.toggle('on', k === name);
     });
     if (name === 'workshop') showAlley();
+    else if (name === 'merchant') showMcAlley();
   }
 
   function closeHud() {
@@ -1987,11 +2311,303 @@
   }
 
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.key === 'Escape') {
-      const modal = document.getElementById('wf-craft-result');
-      if (modal && modal.style.display !== 'none') { closeCraftResult(); }
-    }
+    if (e.key !== 'Enter' && e.key !== 'Escape') return;
+    const craftModal = document.getElementById('wf-craft-result');
+    if (craftModal && craftModal.style.display !== 'none') { closeCraftResult(); return; }
+    const buyResult = document.getElementById('mc-buy-result');
+    if (buyResult && buyResult.style.display !== 'none') { closeBuyResult(); return; }
+    const buyConfirm = document.getElementById('mc-buy-confirm');
+    if (buyConfirm && buyConfirm.style.display !== 'none') { cancelMcConfirm(); return; }
+    const holdModal = document.getElementById('mc-hold-modal');
+    if (holdModal && holdModal.style.display !== 'none') { cancelHoldModal(); return; }
   });
+
+  /* ── Merchant (교환소/상인) ── */
+  const MC_KEYS = ['general','special','armor','blackmarket','weapon','consumable','magic'];
+  const MC_META = {
+    general:     { name:'잡화 상인',   icon:'🛍', npc:'👴', npcAnim:'mc-npc-1',
+      bg:'radial-gradient(ellipse 70% 50% at 50% 100%,rgba(80,60,160,.28) 0%,transparent 55%),linear-gradient(180deg,#060410 0%,#0e0a1a 45%,#08061a 100%)' },
+    special:     { name:'특수 아이템', icon:'💎', npc:'🧙', npcAnim:'mc-npc-7',
+      bg:'radial-gradient(ellipse 70% 50% at 50% 50%,rgba(180,150,20,.22) 0%,transparent 58%),linear-gradient(180deg,#0c0a02 0%,#141006 45%,#100c04 100%)' },
+    armor:       { name:'방어구 상인', icon:'🛡', npc:'💂', npcAnim:'mc-npc-3',
+      bg:'radial-gradient(ellipse 70% 45% at 50% 95%,rgba(60,100,160,.24) 0%,transparent 55%),linear-gradient(180deg,#04080e 0%,#0a0c16 45%,#080a12 100%)' },
+    blackmarket: { name:'암시장 상인', icon:'💀', npc:'🥷', npcAnim:'mc-npc-6',
+      bg:'radial-gradient(ellipse 80% 40% at 50% 100%,rgba(140,10,10,.32) 0%,transparent 52%),linear-gradient(180deg,#0a0202 0%,#120404 45%,#0a0202 100%)' },
+    weapon:      { name:'무기 상인',   icon:'🗡', npc:'🪖', npcAnim:'mc-npc-2',
+      bg:'radial-gradient(ellipse 70% 50% at 50% 100%,rgba(160,20,20,.32) 0%,transparent 52%),linear-gradient(180deg,#0e0404 0%,#160608 45%,#0e0404 100%)' },
+    consumable:  { name:'소비 아이템', icon:'🧪', npc:'👩', npcAnim:'mc-npc-4',
+      bg:'radial-gradient(circle 50% at 40% 65%,rgba(40,160,40,.2) 0%,transparent 50%),radial-gradient(circle 40% at 70% 50%,rgba(120,20,180,.2) 0%,transparent 48%),linear-gradient(180deg,#04080a 0%,#080e0c 45%,#060a08 100%)' },
+    magic:       { name:'마법 도구',   icon:'🔮', npc:'🧝', npcAnim:'mc-npc-5',
+      bg:'radial-gradient(ellipse 60% 60% at 50% 20%,rgba(100,40,200,.28) 0%,transparent 58%),linear-gradient(180deg,#06040e 0%,#0c0a16 45%,#08060e 100%)' },
+  };
+  const MC_ITEMS = {
+    general: [
+      { id:'g1', name:'기본 키트',   price:120,  icon:'🎒', desc:'기본 생존 도구 묶음' },
+      { id:'g2', name:'지도 조각',   price:250,  icon:'🗺', desc:'특정 던전 지도 조각' },
+      { id:'g3', name:'랜턴',        price:80,   icon:'🏮', desc:'어두운 곳에서 시야 확보' },
+      { id:'g4', name:'로프',        price:60,   icon:'🪢', desc:'이동 및 탈출에 사용' },
+    ],
+    weapon: [
+      { id:'w1', name:'강화 단검',   price:850,  icon:'🗡', desc:'민첩형 근접 무기' },
+      { id:'w2', name:'군용 권총',   price:1200, icon:'🔫', desc:'신뢰할 수 있는 사이드암' },
+      { id:'w3', name:'폭발 볼트',   price:340,  icon:'💣', desc:'쇠뇌용 폭발 볼트 ×5' },
+      { id:'w4', name:'야전 도끼',   price:680,  icon:'🪓', desc:'다목적 도끼' },
+    ],
+    armor: [
+      { id:'a1', name:'강화 조끼',   price:1100, icon:'🛡', desc:'경량 방탄 조끼' },
+      { id:'a2', name:'전술 헬멧',   price:720,  icon:'⛑', desc:'표준 전술 헬멧' },
+      { id:'a3', name:'장갑 부츠',   price:480,  icon:'👢', desc:'발목 보호 기능 추가' },
+      { id:'a4', name:'방호 장갑',   price:390,  icon:'🧤', desc:'손 보호 및 그립력 향상' },
+    ],
+    consumable: [
+      { id:'c1', name:'구급약 소형', price:150,  icon:'💊', desc:'HP 소량 회복' },
+      { id:'c2', name:'구급약 대형', price:380,  icon:'💉', desc:'HP 다량 회복' },
+      { id:'c3', name:'자극제',      price:200,  icon:'🧪', desc:'일시적 속도 증가' },
+      { id:'c4', name:'해독제',      price:175,  icon:'🫙', desc:'독 상태 제거' },
+      { id:'c5', name:'연막탄',      price:220,  icon:'💨', desc:'시야 차단용' },
+    ],
+    magic: [
+      { id:'m1', name:'순간이동 주문서', price:2200, icon:'📜', desc:'지정 지점으로 순간이동' },
+      { id:'m2', name:'마법 분석기',     price:1500, icon:'🔮', desc:'아이템 마법 속성 분석' },
+      { id:'m3', name:'보호 부적',       price:880,  icon:'🪬', desc:'단일 치명타 방어' },
+      { id:'m4', name:'에너지 결정',     price:450,  icon:'💎', desc:'마법 충전용 결정석' },
+    ],
+    blackmarket: [
+      { id:'b1', name:'위조 통행증',     price:3500, icon:'📋', desc:'제한 구역 진입 가능' },
+      { id:'b2', name:'금지된 약물',     price:1800, icon:'☠', desc:'극적 성능 향상, 부작용 있음' },
+      { id:'b3', name:'비밀 지도',       price:4200, icon:'🗺', desc:'숨겨진 금고 위치 표시' },
+      { id:'b4', name:'표적 정보',       price:2600, icon:'🎯', desc:'특정 표적의 이동 경로' },
+    ],
+    special: [
+      { id:'s1', name:'전설 무기 케이스', price:9800, icon:'⚔', desc:'봉인된 전설 등급 무기' },
+      { id:'s2', name:'계곡의 인장 ×5',  price:5500, icon:'🔰', desc:'계곡의 인장 5개 묶음' },
+      { id:'s3', name:'시한 강화석',     price:7200, icon:'🌟', desc:'24시간 한정 강화 아이템' },
+      { id:'s4', name:'희귀 레시피 조각', price:3800, icon:'📿', desc:'희귀 제작법 일부' },
+    ],
+  };
+  const MC_LAYOUT = {
+    general:     { left:'0.5%', top:'4%',   w:92, tent:'',               sign:'잡화' },
+    special:     { left:'22%',  top:'16%',  w:84, tent:'tent-special',   sign:'특수' },
+    armor:       { left:'0.5%', top:'43%',  w:82, tent:'tent-armor',     sign:'방어구' },
+    blackmarket: { left:'0.5%', top:'69%',  w:76, tent:'tent-black',     sign:'암시장' },
+    weapon:      { right:'0.5%',top:'4%',   w:92, tent:'tent-weapon',    sign:'무기' },
+    consumable:  { right:'0.5%',top:'43%',  w:82, tent:'tent-consumable',sign:'소비' },
+    magic:       { right:'0.5%',top:'69%',  w:76, tent:'tent-magic',     sign:'마법' },
+  };
+
+  let selectedMerchant = 'general';
+  let mcBuyQty = 1;
+  let mcSelectedItem = null;
+  let mcBalance = 12340;
+  let _buyTimer = null;
+  const BUY_HOLD_MS = 1000;
+
+  function showMcAlley() {
+    document.getElementById('mc-alley').style.display = 'block';
+    document.getElementById('mc-merchant-view').style.display = 'none';
+    renderMerchantAlley();
+  }
+
+  function renderMerchantAlley() {
+    const container = document.getElementById('mc-alley-stalls');
+    if (!container) return;
+    container.innerHTML = '';
+    MC_KEYS.forEach(k => {
+      const m = MC_META[k];
+      const lay = MC_LAYOUT[k];
+      const stall = document.createElement('div');
+      const tentCls = lay.tent ? ' ' + lay.tent : '';
+      stall.className = 'mc-stall' + tentCls;
+      if (lay.left  !== undefined) stall.style.left  = lay.left;
+      if (lay.right !== undefined) stall.style.right = lay.right;
+      stall.style.top   = lay.top;
+      stall.style.width = lay.w + 'px';
+      const awning = document.createElement('div');
+      awning.className = 'mc-stall-awning';
+      awning.textContent = lay.sign;
+      stall.appendChild(awning);
+      const body = document.createElement('div');
+      body.className = 'mc-stall-body';
+      const npc = document.createElement('span');
+      npc.className = 'mc-stall-npc ' + m.npcAnim;
+      npc.textContent = m.npc;
+      body.appendChild(npc);
+      const iconEl = document.createElement('div');
+      iconEl.className = 'mc-stall-icon';
+      iconEl.textContent = m.icon;
+      body.appendChild(iconEl);
+      const nameEl = document.createElement('div');
+      nameEl.className = 'mc-stall-name';
+      nameEl.textContent = m.name;
+      body.appendChild(nameEl);
+      stall.appendChild(body);
+      stall.onclick = () => enterMerchant(k);
+      container.appendChild(stall);
+    });
+  }
+
+  function enterMerchant(key) {
+    selectedMerchant = key;
+    document.getElementById('mc-alley').style.display = 'none';
+    document.getElementById('mc-merchant-view').style.display = 'flex';
+    document.getElementById('mc-buy-panel').style.display = 'none';
+    renderMerchantNav();
+    renderMerchantDetail();
+  }
+
+  function renderMerchantNav() {
+    const nav = document.getElementById('mc-mer-nav');
+    nav.innerHTML = '<div class="wf-nav-title">다른 상인</div>';
+    MC_KEYS.forEach(k => {
+      const m = MC_META[k];
+      const btn = document.createElement('button');
+      btn.className = 'wf-nav-btn' + (k === selectedMerchant ? ' nav-active' : '');
+      const iconEl = document.createElement('span');
+      iconEl.className = 'wf-nav-icon';
+      iconEl.textContent = m.icon;
+      btn.appendChild(iconEl);
+      const nameEl = document.createElement('span');
+      nameEl.className = 'wf-nav-name';
+      nameEl.textContent = m.name;
+      btn.appendChild(nameEl);
+      btn.onclick = () => enterMerchant(k);
+      nav.appendChild(btn);
+    });
+  }
+
+  function renderMerchantDetail() {
+    const m = MC_META[selectedMerchant];
+    const items = MC_ITEMS[selectedMerchant] || [];
+    document.getElementById('mc-mer-bg').style.background = m.bg;
+    const content = document.getElementById('mc-mer-content');
+    content.innerHTML = '';
+    // 상인 헤더
+    const hdr = document.createElement('div');
+    hdr.className = 'wf-detail-hdr';
+    hdr.style.marginBottom = '12px';
+    hdr.innerHTML = '<span style="font-size:1.3rem;margin-right:6px">' + m.icon + '</span><span class="wf-detail-name">' + m.name + '</span>';
+    content.appendChild(hdr);
+    // 아이템 그리드
+    const grid = document.createElement('div');
+    grid.className = 'mc-item-grid';
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'mc-item-card';
+      card.id = 'mc-item-' + item.id;
+      card.innerHTML =
+        '<div class="mc-item-icon">' + item.icon + '</div>' +
+        '<div class="mc-item-name">' + item.name + '</div>' +
+        '<div class="mc-item-price">🪙 ' + fmtNum(item.price) + '</div>';
+      card.onclick = () => selectMcItem(item);
+      grid.appendChild(card);
+    });
+    content.appendChild(grid);
+    // NPC (우측 하단 플로팅)
+    const leftEl = document.getElementById('mc-mer-left');
+    const existingNpc = leftEl.querySelector('.mc-mer-npc');
+    if (existingNpc) existingNpc.remove();
+    const npcEl = document.createElement('div');
+    npcEl.className = 'mc-mer-npc';
+    npcEl.textContent = m.npc;
+    leftEl.appendChild(npcEl);
+  }
+
+  function selectMcItem(item) {
+    mcSelectedItem = item;
+    mcBuyQty = 1;
+    document.querySelectorAll('.mc-item-card').forEach(c => c.classList.remove('sel'));
+    const cardEl = document.getElementById('mc-item-' + item.id);
+    if (cardEl) cardEl.classList.add('sel');
+    document.getElementById('mc-buy-panel').style.display = 'flex';
+    document.getElementById('mbp-icon').textContent = item.icon;
+    document.getElementById('mbp-iname').textContent = item.name;
+    document.getElementById('mbp-desc').textContent = item.desc;
+    document.getElementById('mbp-unit-price').textContent = '🪙 ' + fmtNum(item.price);
+    document.getElementById('mbp-qty-val').textContent = '1';
+    updateMcBuyPanel();
+  }
+
+  function mcQtyAdj(delta) {
+    if (!mcSelectedItem) return;
+    mcBuyQty = Math.max(1, Math.min(99, mcBuyQty + delta));
+    document.getElementById('mbp-qty-val').textContent = mcBuyQty;
+    updateMcBuyPanel();
+  }
+
+  function updateMcBuyPanel() {
+    if (!mcSelectedItem) return;
+    const total = mcSelectedItem.price * mcBuyQty;
+    document.getElementById('mbp-total-price').textContent = '🪙 ' + fmtNum(total);
+    const canAfford = mcBalance >= total;
+    const balRow = document.getElementById('mbp-balance-row');
+    balRow.innerHTML = '잔액 <span style="color:' + (canAfford ? '#46c878' : '#f07070') + ';font-weight:600">🪙 ' + fmtNum(mcBalance) + '</span>';
+    const btn = document.getElementById('mbp-buy-btn');
+    btn.disabled = !canAfford;
+    btn.style.opacity = canAfford ? '' : '0.4';
+    btn.style.cursor = canAfford ? '' : 'not-allowed';
+  }
+
+  function showMerchantBuyConfirm() {
+    if (!mcSelectedItem) return;
+    const total = mcSelectedItem.price * mcBuyQty;
+    if (mcBalance < total) return;
+    document.getElementById('mbc-item').textContent = mcSelectedItem.icon + ' ' + mcSelectedItem.name + ' × ' + mcBuyQty;
+    document.getElementById('mbc-price').textContent = '🪙 ' + fmtNum(total) + ' 실버';
+    document.getElementById('mc-buy-confirm').style.display = 'flex';
+  }
+
+  function cancelMcConfirm() {
+    document.getElementById('mc-buy-confirm').style.display = 'none';
+  }
+
+  function proceedToHoldBuy() {
+    document.getElementById('mc-buy-confirm').style.display = 'none';
+    const bar = document.getElementById('mhm-hold-bar');
+    bar.style.transition = 'none';
+    bar.style.width = '0';
+    document.getElementById('mc-hold-modal').style.display = 'flex';
+  }
+
+  function startBuyHold(e) {
+    e.preventDefault();
+    const bar = document.getElementById('mhm-hold-bar');
+    bar.style.transition = 'none';
+    bar.style.width = '0';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        bar.style.transition = `width ${BUY_HOLD_MS}ms linear`;
+        bar.style.width = '100%';
+      });
+    });
+    _buyTimer = setTimeout(() => { _buyTimer = null; completeBuy(); }, BUY_HOLD_MS);
+  }
+
+  function cancelBuyHold() {
+    if (_buyTimer) { clearTimeout(_buyTimer); _buyTimer = null; }
+    const bar = document.getElementById('mhm-hold-bar');
+    if (bar) { bar.style.transition = 'width 0.18s'; bar.style.width = '0'; }
+  }
+
+  function completeBuy() {
+    document.getElementById('mc-hold-modal').style.display = 'none';
+    if (!mcSelectedItem) return;
+    const total = mcSelectedItem.price * mcBuyQty;
+    mcBalance -= total;
+    document.getElementById('mbr-icon').textContent = mcSelectedItem.icon;
+    document.getElementById('mbr-item-name').textContent = mcSelectedItem.name;
+    document.getElementById('mbr-item-qty').textContent = mcBuyQty + '개 구매 완료 · 잔액 🪙 ' + fmtNum(mcBalance);
+    document.getElementById('mc-buy-result').style.display = 'flex';
+    updateMcBuyPanel();
+  }
+
+  function closeBuyResult() {
+    document.getElementById('mc-buy-result').style.display = 'none';
+  }
+
+  function cancelHoldModal() {
+    cancelBuyHold();
+    document.getElementById('mc-hold-modal').style.display = 'none';
+  }
 
   /* Unimplemented toast */
   function unimpl() {
