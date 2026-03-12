@@ -134,6 +134,11 @@
     .bag-test-btn { font-size: .65rem; padding: 3px 9px; background: var(--bg3); border: 1px solid var(--border-hi); color: var(--muted); border-radius: 4px; cursor: pointer; transition: background .15s; }
     .bag-test-btn:hover { border-color: var(--accent); color: var(--accent); }
     .bag-test-btn.on { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    /* 배낭 → 보관함 이동 버튼 */
+    .bag-move-btn { font-size: .62rem; padding: 3px 9px; background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent); border-radius: 4px; cursor: pointer; transition: background .15s; white-space: nowrap; }
+    .bag-move-btn:hover { background: var(--accent); color: #fff; }
+    .bag-slot.filled { background: rgba(160,100,200,0.22); border-color: #8050b8; border-style: solid; }
+    .inv-slot.filled { background: rgba(130,80,180,0.18); border-color: #6040a0; border-style: solid; }
     /* 안전 가방 슬롯 */
     .safe-bag-section { margin-top: 10px; }
     .safe-bag-hdr { font-size: .65rem; color: #46c878; letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 4px; }
@@ -948,6 +953,7 @@
             <div class="hsec" style="flex:1">
               <div class="hsec-t" style="display:flex;align-items:center;justify-content:space-between;gap:6px">
                 <span>배낭 <span style="font-weight:400;color:var(--muted);font-size:.68rem" id="bag-slots-label">4×2 · 8칸</span></span>
+                <button class="bag-move-btn" onclick="moveAllBagToInv()">모두 보관함으로 이동</button>
               </div>
               <div class="bag-grid" id="bag-grid"></div>
               <div class="bag-empty" id="bag-empty-msg" style="display:none">배낭이 장착되지 않았습니다</div>
@@ -965,6 +971,12 @@
                   <button class="bag-test-btn" onclick="changeBag('large',this)">대형 배낭 (4×4)</button>
                   <button class="bag-test-btn" onclick="changeBag('xl',this)">특대형 배낭 (4×5)</button>
                   <button class="bag-test-btn" onclick="changeBag('none',this)">장착 없음</button>
+                </div>
+                <div style="font-size:.6rem;color:var(--muted);letter-spacing:.04em;margin:8px 0 4px">[테스트] 배낭 아이템</div>
+                <div style="display:flex;flex-wrap:wrap;gap:5px">
+                  <button class="bag-test-btn" onclick="simFillBag()">배낭 채우기</button>
+                  <button class="bag-test-btn" onclick="simEmptyBag()">배낭 비우기</button>
+                  <span id="bag-filled-label" style="font-size:.62rem;color:var(--muted);align-self:center">0개 아이템</span>
                 </div>
               </div>
             </div>
@@ -1510,6 +1522,22 @@
       });
       el.textContent = '획득한 아이템을 보관함에서 보관소로 이동했습니다';
     }
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2500);
+  }
+
+  /* 공용 토스트 */
+  function showToast(msg, isError) {
+    const el = document.createElement('div');
+    el.textContent = msg;
+    const color = isError ? '#e05050' : '#46c878';
+    const bg    = isError ? '#200a0a' : '#0a1e12';
+    Object.assign(el.style, {
+      position:'fixed', bottom:'28px', left:'50%', transform:'translateX(-50%)',
+      background:bg, border:'1px solid ' + color, color:color,
+      padding:'9px 18px', borderRadius:'6px', fontSize:'.76rem',
+      zIndex:'9999', pointerEvents:'none', whiteSpace:'nowrap'
+    });
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 2500);
   }
@@ -2706,17 +2734,7 @@
     renderInvGrid();
     closeMod();
     openHud('equipment');
-    // 확장 완료 토스트
-    const el = document.createElement('div');
-    el.textContent = '✔ 보관함이 ' + invSlots + '칸으로 확장됐습니다';
-    Object.assign(el.style, {
-      position:'fixed', bottom:'28px', left:'50%', transform:'translateX(-50%)',
-      background:'#0a1e12', border:'1px solid #46c878', color:'#46c878',
-      padding:'9px 18px', borderRadius:'6px', fontSize:'.76rem',
-      zIndex:'9999', pointerEvents:'none', whiteSpace:'nowrap'
-    });
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 2200);
+    showToast('✔ 보관함이 ' + invSlots + '칸으로 확장됐습니다');
   }
 
   function closeExpand() {
@@ -2733,6 +2751,58 @@
     xl:     { name: '특대형 배낭',  cols: 4, rows: 5,  desc: '4×5 · 20칸', safeSlots: 2 },
   };
   let currentBag = 'small';
+  let bagFilledSlots = 0;   // 배낭 내 아이템 수 (시뮬)
+  let invUsedSlots  = 0;    // 보관함 사용 슬롯 수 (시뮬)
+
+  function updateBagFilledLabel() {
+    const el = document.getElementById('bag-filled-label');
+    if (el) el.textContent = bagFilledSlots + '개 아이템';
+  }
+
+  function applyBagFilled() {
+    const slots = document.querySelectorAll('#bag-grid .bag-slot');
+    slots.forEach((s, i) => {
+      s.classList.toggle('filled', i < bagFilledSlots);
+    });
+    updateBagFilledLabel();
+  }
+
+  function applyInvUsed() {
+    const slots = document.querySelectorAll('#inv-grid .inv-slot');
+    slots.forEach((s, i) => {
+      s.classList.toggle('filled', i < invUsedSlots);
+    });
+  }
+
+  function simFillBag() {
+    const bag = BAG_TYPES[currentBag];
+    const total = bag.cols * bag.rows;
+    if (total === 0) { showToast('배낭이 장착되지 않았습니다'); return; }
+    bagFilledSlots = total;
+    applyBagFilled();
+  }
+
+  function simEmptyBag() {
+    bagFilledSlots = 0;
+    applyBagFilled();
+  }
+
+  function moveAllBagToInv() {
+    if (bagFilledSlots === 0) {
+      showToast('배낭에 이동할 아이템이 없습니다');
+      return;
+    }
+    const freeInv = invSlots - invUsedSlots;
+    if (freeInv < bagFilledSlots) {
+      showToast('보관함 공간이 부족합니다. 필요: ' + bagFilledSlots + '칸 · 여유: ' + freeInv + '칸', true);
+      return;
+    }
+    invUsedSlots += bagFilledSlots;
+    bagFilledSlots = 0;
+    applyBagFilled();
+    applyInvUsed();
+    showToast('✔ 배낭 아이템을 보관함으로 이동했습니다');
+  }
 
   function renderBagGrid() {
     const bag = BAG_TYPES[currentBag];
@@ -2784,9 +2854,13 @@
 
   function changeBag(type, btn) {
     currentBag = type;
+    const bag = BAG_TYPES[type];
+    const maxSlots = bag.cols * bag.rows;
+    if (bagFilledSlots > maxSlots) bagFilledSlots = maxSlots;
     document.querySelectorAll('.bag-test-btn').forEach(b => b.classList.remove('on'));
     btn.classList.add('on');
     renderBagGrid();
+    applyBagFilled();
   }
 
   /* 필터링 버튼 */
