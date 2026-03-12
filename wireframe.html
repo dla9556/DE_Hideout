@@ -134,6 +134,11 @@
     .bag-test-btn { font-size: .65rem; padding: 3px 9px; background: var(--bg3); border: 1px solid var(--border-hi); color: var(--muted); border-radius: 4px; cursor: pointer; transition: background .15s; }
     .bag-test-btn:hover { border-color: var(--accent); color: var(--accent); }
     .bag-test-btn.on { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    /* 안전 가방 슬롯 */
+    .safe-bag-section { margin-top: 10px; }
+    .safe-bag-hdr { font-size: .65rem; color: #46c878; letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 4px; }
+    .safe-bag-grid { display: grid; gap: 4px; }
+    .safe-bag-slot { height: 46px; border: 1px dashed #46c878; border-radius: 5px; background: rgba(70,200,120,0.07); }
 
     /* ══ MODAL OVERLAY ══ */
     #mod { position: absolute; inset: 0; background: rgba(5,7,15,.82); display: none; align-items: center; justify-content: center; z-index: 20; }
@@ -946,6 +951,11 @@
               </div>
               <div class="bag-grid" id="bag-grid"></div>
               <div class="bag-empty" id="bag-empty-msg" style="display:none">배낭이 장착되지 않았습니다</div>
+              <!-- 안전 가방 슬롯 -->
+              <div class="safe-bag-section" id="safe-bag-section" style="display:none">
+                <div class="safe-bag-hdr">🔒 안전 가방 <span style="font-weight:400;color:var(--muted);font-size:.65rem" id="safe-bag-label">1칸</span></div>
+                <div class="safe-bag-grid" id="safe-bag-grid"></div>
+              </div>
               <!-- 테스트 -->
               <div style="margin-top:12px;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px">
                 <div style="font-size:.6rem;color:var(--muted);letter-spacing:.04em;margin-bottom:6px">[테스트] 배낭 변경</div>
@@ -2716,11 +2726,11 @@
 
   /* ── 배낭 데이터 ── */
   const BAG_TYPES = {
-    none:   { name: '장착 없음',    cols: 4, rows: 0,  desc: '장착 없음' },
-    small:  { name: '기본 배낭',    cols: 4, rows: 2,  desc: '4×2 · 8칸' },
-    medium: { name: '중형 배낭',    cols: 4, rows: 3,  desc: '4×3 · 12칸' },
-    large:  { name: '대형 배낭',    cols: 4, rows: 4,  desc: '4×4 · 16칸' },
-    xl:     { name: '특대형 배낭',  cols: 4, rows: 5,  desc: '4×5 · 20칸' },
+    none:   { name: '장착 없음',    cols: 4, rows: 0,  desc: '장착 없음',   safeSlots: 0 },
+    small:  { name: '기본 배낭',    cols: 4, rows: 2,  desc: '4×2 · 8칸',  safeSlots: 1 },
+    medium: { name: '중형 배낭',    cols: 4, rows: 3,  desc: '4×3 · 12칸', safeSlots: 1 },
+    large:  { name: '대형 배낭',    cols: 4, rows: 4,  desc: '4×4 · 16칸', safeSlots: 2 },
+    xl:     { name: '특대형 배낭',  cols: 4, rows: 5,  desc: '4×5 · 20칸', safeSlots: 2 },
   };
   let currentBag = 'small';
 
@@ -2751,6 +2761,26 @@
       const slot = document.createElement('div');
       slot.className = 'bag-slot';
       grid.appendChild(slot);
+    }
+
+    // 안전 가방 슬롯
+    const safeSection = document.getElementById('safe-bag-section');
+    const safeGrid = document.getElementById('safe-bag-grid');
+    const safeLabel = document.getElementById('safe-bag-label');
+    if (safeSection && safeGrid) {
+      if (bag.safeSlots > 0) {
+        safeSection.style.display = 'block';
+        if (safeLabel) safeLabel.textContent = bag.safeSlots + '칸';
+        safeGrid.style.gridTemplateColumns = 'repeat(' + bag.safeSlots + ', 1fr)';
+        safeGrid.innerHTML = '';
+        for (let i = 0; i < bag.safeSlots; i++) {
+          const s = document.createElement('div');
+          s.className = 'safe-bag-slot';
+          safeGrid.appendChild(s);
+        }
+      } else {
+        safeSection.style.display = 'none';
+      }
     }
   }
 
