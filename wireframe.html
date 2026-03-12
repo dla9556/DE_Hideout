@@ -251,6 +251,37 @@
     .wf-recipe-row:hover { background: var(--bg2); color: var(--text); border-color: var(--accent); }
     .wf-upg-box { margin-top: auto; padding: 10px 12px; background: rgba(74,124,240,.06); border: 1px solid var(--accent-dim); border-radius: 6px; flex-shrink: 0; }
     .wf-upg-title { font-size: .62rem; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+    /* ── Workshop Alley & Facility ── */
+    #hp-workshop.on { overflow: hidden; padding: 0; min-height: 480px; }
+    #wf-alley { width: 100%; min-height: 480px; background: linear-gradient(180deg, #04060c 0%, #0c1018 20%, #141a28 55%, #0c1018 85%, #04060c 100%); display: flex; flex-direction: column; }
+    .wf-alley-header { text-align: center; padding: 18px 0 6px; }
+    .wf-alley-title { font-size: .8rem; font-weight: 700; color: var(--text); letter-spacing: .1em; }
+    .wf-alley-sub { font-size: .62rem; color: var(--muted); letter-spacing: .15em; text-transform: uppercase; margin-top: 4px; }
+    .wf-alley-divider { width: 60px; height: 1px; background: var(--border-hi); margin: 12px auto 16px; }
+    #wf-alley-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px 24px; max-width: 600px; margin: 0 auto; width: 100%; }
+    .wf-card { position: relative; border-radius: 8px; padding: 18px 12px 14px; border: 1px solid var(--border-hi); background: var(--bg2); cursor: pointer; transition: all .2s; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-height: 100px; }
+    .wf-card:hover:not(.locked) { border-color: var(--accent); background: rgba(74,124,240,.07); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74,124,240,.1); }
+    .wf-card.locked { opacity: .5; cursor: not-allowed; }
+    .wf-card-icon { font-size: 1.8rem; line-height: 1; }
+    .wf-card-name { font-size: .74rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .wf-card-badge { font-size: .58rem; padding: 2px 7px; border-radius: 3px; font-weight: 700; margin-top: 2px; }
+    .wf-card-lock { position: absolute; top: 7px; right: 8px; font-size: .85rem; opacity: .6; }
+    /* Facility detail */
+    #wf-facility { width: 100%; min-height: 480px; overflow: hidden; display: flex; }
+    #wf-fac-left { flex: 1; overflow-y: auto; padding: 16px 20px; position: relative; display: flex; flex-direction: column; min-height: 480px; }
+    #wf-fac-glow { position: absolute; inset: 0; pointer-events: none; opacity: .07; border-radius: 0; }
+    .wf-fac-back { display: inline-flex; align-items: center; gap: 5px; font-size: .7rem; color: var(--muted); cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; transition: color .15s; flex-shrink: 0; }
+    .wf-fac-back:hover { color: var(--text); }
+    #wf-fac-content { position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1; }
+    #wf-fac-nav { width: 185px; flex-shrink: 0; overflow-y: auto; padding: 12px 8px; display: flex; flex-direction: column; gap: 3px; background: rgba(0,0,0,.2); border-left: 1px solid var(--border); }
+    .wf-nav-title { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; padding: 4px 8px 9px; border-bottom: 1px solid var(--border); margin-bottom: 3px; flex-shrink: 0; }
+    .wf-nav-btn { display: flex; align-items: center; gap: 7px; padding: 7px 8px; border-radius: 5px; border: 1px solid transparent; cursor: pointer; font-size: .71rem; color: var(--muted); background: transparent; text-align: left; transition: all .15s; width: 100%; }
+    .wf-nav-btn:hover:not(.nav-locked) { background: var(--bg2); color: var(--text); border-color: var(--border); }
+    .wf-nav-btn.nav-active { background: rgba(74,124,240,.1); color: var(--text); border-color: var(--accent-dim); }
+    .wf-nav-btn.nav-locked { opacity: .45; cursor: not-allowed; }
+    .wf-nav-icon { font-size: .95rem; flex-shrink: 0; width: 20px; text-align: center; }
+    .wf-nav-name { flex: 1; }
+    .wf-nav-badge { font-size: .54rem; padding: 1px 5px; border-radius: 2px; flex-shrink: 0; }
     .wfu-mat-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg3); margin-bottom: 5px; font-size: .74rem; }
     .wfu-ok { color: #46c878; font-weight: 600; }
     .wfu-ng { color: #f07070; font-weight: 600; }
@@ -521,40 +552,26 @@
 
         <!-- 작업장 -->
         <div class="hpanel" id="hp-workshop">
-          <div class="hsec" style="max-width:200px;flex-shrink:0">
-            <div class="hsec-t">시설 목록</div>
-            <div class="wf-row on" id="wf-row-workbench" onclick="selectFacility('workbench')">
-              <span>기본 작업대</span><span class="wf-badge locked" id="wf-badge-workbench">미개방</span>
+          <!-- 골목 뷰 -->
+          <div id="wf-alley">
+            <div class="wf-alley-header">
+              <div class="wf-alley-title">🏚 공방 골목</div>
+              <div class="wf-alley-sub">은신처 내 시설 — 클릭하여 입장</div>
             </div>
-            <div class="wf-row" id="wf-row-slime" onclick="selectFacility('slime')">
-              <span>애완슬라임</span><span class="wf-badge locked" id="wf-badge-slime">미개방</span>
+            <div class="wf-alley-divider"></div>
+            <div id="wf-alley-cards"></div>
+          </div>
+          <!-- 시설 상세 뷰 -->
+          <div id="wf-facility" style="display:none">
+            <div id="wf-fac-left">
+              <div id="wf-fac-glow"></div>
+              <button class="wf-fac-back" onclick="showAlley()">← 공방 골목으로</button>
+              <div id="wf-fac-content"></div>
             </div>
-            <div class="wf-row" id="wf-row-weapon" onclick="selectFacility('weapon')">
-              <span>무기 제작소</span><span class="wf-badge locked" id="wf-badge-weapon">미개방</span>
-            </div>
-            <div class="wf-row" id="wf-row-armor" onclick="selectFacility('armor')">
-              <span>방어구 제작소</span><span class="wf-badge locked" id="wf-badge-armor">미개방</span>
-            </div>
-            <div class="wf-row" id="wf-row-consumable" onclick="selectFacility('consumable')">
-              <span>연금술 실험실</span><span class="wf-badge locked" id="wf-badge-consumable">미개방</span>
-            </div>
-            <div class="wf-row" id="wf-row-scroll" onclick="selectFacility('scroll')">
-              <span>주문서 제작소</span><span class="wf-badge locked" id="wf-badge-scroll">미개방</span>
-            </div>
-            <div class="wf-row" id="wf-row-tinkerer" onclick="selectFacility('tinkerer')">
-              <span>땜장이 작업소</span><span class="wf-badge locked" id="wf-badge-tinkerer">미개방</span>
-            </div>
-            <div class="wf-row" id="wf-row-altar" onclick="selectFacility('altar')">
-              <span>정화의 제단</span><span class="wf-badge locked" id="wf-badge-altar">미개방</span>
-            </div>
-            <div class="wf-row" id="wf-row-synthesis" onclick="selectFacility('synthesis')">
-              <span>아이템 합성소</span><span class="wf-badge locked" id="wf-badge-synthesis">미개방</span>
-            </div>
-            <div class="wf-row" id="wf-row-recipe" onclick="selectFacility('recipe')">
-              <span>레시피 보관함</span><span class="wf-badge locked" id="wf-badge-recipe">미개방</span>
+            <div id="wf-fac-nav">
+              <div class="wf-nav-title">다른 시설</div>
             </div>
           </div>
-          <div class="hsec" id="wf-detail" style="display:flex;flex-direction:column"></div>
         </div>
 
         <!-- 시스템 -->
@@ -919,6 +936,7 @@
       if (tab) tab.classList.toggle('on', k === name);
       document.getElementById('hp-' + k).classList.toggle('on', k === name);
     });
+    if (name === 'workshop') showAlley();
   }
 
   function closeHud() {
@@ -1233,22 +1251,122 @@
     }
   };
   const WF_KEYS = ['workbench','slime','weapon','armor','consumable','scroll','tinkerer','altar','synthesis','recipe'];
+  const WF_META = {
+    workbench:  { icon: '🔨', color: '#c07820' },
+    slime:      { icon: '🐸', color: '#20b840' },
+    weapon:     { icon: '⚔️',  color: '#6090d0' },
+    armor:      { icon: '🛡️',  color: '#8090a8' },
+    consumable: { icon: '🧪', color: '#a040d0' },
+    scroll:     { icon: '📜', color: '#5040d0' },
+    tinkerer:   { icon: '🔧', color: '#c06020' },
+    altar:      { icon: '✨', color: '#d0c040' },
+    synthesis:  { icon: '⚗️',  color: '#20c0c0' },
+    recipe:     { icon: '📚', color: '#c0a840' }
+  };
   let selectedFacility = 'workbench';
 
-  function selectFacility(id) {
-    selectedFacility = id;
-    WF_KEYS.forEach(k => document.getElementById('wf-row-' + k).classList.toggle('on', k === id));
-    renderWfDetail();
+  function showAlley() {
+    document.getElementById('wf-alley').style.display = 'flex';
+    document.getElementById('wf-facility').style.display = 'none';
+    renderWorkshopAlley();
   }
 
-  function renderWfDetail() {
+  function enterFacility(id) {
+    selectedFacility = id;
+    document.getElementById('wf-alley').style.display = 'none';
+    document.getElementById('wf-facility').style.display = 'flex';
+    renderFacilityDetail();
+    renderFacilityNav();
+  }
+
+  function renderWorkshopAlley() {
+    const grid = document.getElementById('wf-alley-cards');
+    if (!grid) return;
+    grid.innerHTML = '';
+    WF_KEYS.forEach(k => {
+      const d = WF_DATA[k];
+      const m = WF_META[k];
+      const locked = d.lv < 0;
+      const card = document.createElement('div');
+      card.className = 'wf-card' + (locked ? ' locked' : '');
+      if (locked) {
+        const lockEl = document.createElement('div');
+        lockEl.className = 'wf-card-lock';
+        lockEl.textContent = '🔒';
+        card.appendChild(lockEl);
+      }
+      const iconEl = document.createElement('div');
+      iconEl.className = 'wf-card-icon';
+      iconEl.textContent = m.icon;
+      card.appendChild(iconEl);
+      const nameEl = document.createElement('div');
+      nameEl.className = 'wf-card-name';
+      nameEl.textContent = d.name;
+      card.appendChild(nameEl);
+      const badgeEl = document.createElement('span');
+      if (d.lv < 0) {
+        badgeEl.className = 'wf-badge locked'; badgeEl.textContent = '미개방';
+      } else if (d.maxLv > 0 && d.lv >= d.maxLv) {
+        badgeEl.className = 'wf-badge max'; badgeEl.textContent = '최대 레벨';
+      } else if (d.maxLv === 0) {
+        badgeEl.className = 'wf-badge open'; badgeEl.textContent = '개방됨';
+      } else {
+        badgeEl.className = 'wf-badge lv'; badgeEl.textContent = 'Lv.' + d.lv;
+      }
+      card.appendChild(badgeEl);
+      if (!locked) card.onclick = () => enterFacility(k);
+      grid.appendChild(card);
+    });
+  }
+
+  function renderFacilityNav() {
+    const nav = document.getElementById('wf-fac-nav');
+    nav.innerHTML = '<div class="wf-nav-title">다른 시설</div>';
+    WF_KEYS.forEach(k => {
+      const d = WF_DATA[k];
+      const m = WF_META[k];
+      const locked = d.lv < 0;
+      const btn = document.createElement('button');
+      btn.className = 'wf-nav-btn' + (k === selectedFacility ? ' nav-active' : '') + (locked ? ' nav-locked' : '');
+      const iconEl = document.createElement('span');
+      iconEl.className = 'wf-nav-icon';
+      iconEl.textContent = m.icon;
+      btn.appendChild(iconEl);
+      const nameEl = document.createElement('span');
+      nameEl.className = 'wf-nav-name';
+      nameEl.textContent = d.name;
+      btn.appendChild(nameEl);
+      const badgeEl = document.createElement('span');
+      if (d.lv < 0) {
+        badgeEl.className = 'wf-badge locked'; badgeEl.textContent = '잠김';
+      } else if (d.maxLv === 0) {
+        badgeEl.className = 'wf-badge open'; badgeEl.textContent = '✓';
+      } else if (d.lv >= d.maxLv) {
+        badgeEl.className = 'wf-badge max'; badgeEl.textContent = 'MAX';
+      } else {
+        badgeEl.className = 'wf-badge lv'; badgeEl.textContent = 'Lv.' + d.lv;
+      }
+      btn.appendChild(badgeEl);
+      if (!locked) btn.onclick = () => enterFacility(k);
+      nav.appendChild(btn);
+    });
+  }
+
+  function renderFacilityDetail() {
     const d = WF_DATA[selectedFacility];
-    const el = document.getElementById('wf-detail');
+    const m = WF_META[selectedFacility];
+    document.getElementById('wf-fac-glow').style.background =
+      'radial-gradient(ellipse at 50% 15%, ' + m.color + ' 0%, transparent 70%)';
+    const el = document.getElementById('wf-fac-content');
     el.innerHTML = '';
 
     // header
     const hdr = document.createElement('div');
     hdr.className = 'wf-detail-hdr';
+    const iconSpan = document.createElement('span');
+    iconSpan.style.cssText = 'font-size:1.3rem;margin-right:4px;';
+    iconSpan.textContent = m.icon;
+    hdr.appendChild(iconSpan);
     const nameEl = document.createElement('span');
     nameEl.className = 'wf-detail-name';
     nameEl.textContent = d.name;
@@ -1352,8 +1470,9 @@
 
   function openFacility(id) {
     WF_DATA[id].lv = (WF_DATA[id].maxLv === 0) ? 0 : 1;
-    renderWorkshopSidebar();
-    renderWfDetail();
+    selectedFacility = id;
+    renderFacilityDetail();
+    renderFacilityNav();
   }
 
   /* ── Slime resource collection ── */
@@ -1391,6 +1510,7 @@
   function closeSlimeCollect() {
     closeMod();
     openHud('workshop');
+    enterFacility(selectedFacility);
   }
 
   let pendingUpgradeFacility = null;
@@ -1460,31 +1580,15 @@
     const d = WF_DATA[pendingUpgradeFacility];
     if (d && d.lv < d.maxLv) d.lv++;
     closeMod();
+    selectedFacility = pendingUpgradeFacility;
     openHud('workshop');
-    renderWorkshopSidebar();
-    renderWfDetail();
+    enterFacility(selectedFacility);
   }
 
   function closeUpgradeModal() {
     closeMod();
     openHud('workshop');
-  }
-
-  function renderWorkshopSidebar() {
-    WF_KEYS.forEach(k => {
-      const d = WF_DATA[k];
-      const badge = document.getElementById('wf-badge-' + k);
-      if (!badge) return;
-      if (d.lv < 0) {
-        badge.className = 'wf-badge locked'; badge.textContent = '미개방';
-      } else if (d.maxLv > 0 && d.lv >= d.maxLv) {
-        badge.className = 'wf-badge max'; badge.textContent = '최대';
-      } else if (d.maxLv === 0) {
-        badge.className = 'wf-badge open'; badge.textContent = '개방됨';
-      } else {
-        badge.className = 'wf-badge lv'; badge.textContent = 'Lv.' + d.lv;
-      }
-    });
+    enterFacility(selectedFacility);
   }
 
   /* Unimplemented toast */
@@ -1642,7 +1746,7 @@
   /* Init */
   showPage('char');
   renderSquad();
-  renderWfDetail();
+  // workshop initializes on openHud('workshop')
   initInvGrid();
   renderBagGrid();
 </script>
