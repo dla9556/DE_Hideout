@@ -44,10 +44,10 @@
     /* ZONE-A */
     #za { height: 48px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 10px; gap: 4px; flex-shrink: 0; overflow: visible; position: relative; z-index: 5; }
     .zlbl { font-size: .56rem; color: var(--muted); background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; pointer-events: none; flex-shrink: 0; margin-right: 2px; letter-spacing: .04em; }
-    .hbtn { padding: 5px 11px; background: none; border: 1px solid var(--border-hi); border-radius: 5px; color: var(--text); font-size: .76rem; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s; flex-shrink: 0; }
-    .hbtn:hover { background: var(--bg3); border-color: var(--accent); color: var(--accent); }
-    .hbtn.dim { color: var(--muted); border-style: dashed; }
-    .hbtn.dim:hover { background: none; border-color: var(--unimpl); color: var(--unimpl); }
+    .hbtn, .htab { padding: 5px 11px; background: none; border: 1px solid var(--border-hi); border-radius: 5px; color: var(--text); font-size: .76rem; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s; flex-shrink: 0; }
+    .hbtn:hover, .htab:hover { background: var(--bg3); border-color: var(--accent); color: var(--accent); }
+    .hbtn.dim, .htab.dim { color: var(--muted); border-style: dashed; }
+    .hbtn.dim:hover, .htab.dim:hover { background: none; border-color: var(--unimpl); color: var(--unimpl); }
     .za-sp { flex: 1; }
     .za-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .info-ch { padding: 3px 9px; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; font-size: .68rem; color: var(--muted); white-space: nowrap; }
@@ -97,8 +97,6 @@
     #hud { position: absolute; inset: 0; background: rgba(8,10,18,.88); display: none; flex-direction: column; z-index: 10; }
     #hud.on { display: flex; }
     .hud-hdr { height: 48px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 10px; gap: 4px; flex-shrink: 0; }
-    .htab { padding: 6px 13px; background: none; border: 1px solid var(--border-hi); border-radius: 5px; color: var(--muted); font-size: .78rem; cursor: pointer; transition: background .15s; white-space: nowrap; }
-    .htab:hover { background: var(--bg3); color: var(--text); }
     .htab.on { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 600; }
     .hud-x { margin-left: auto; width: 28px; height: 28px; background: none; border: 1px solid var(--border-hi); border-radius: 4px; color: var(--muted); cursor: pointer; font-size: .95rem; }
     .hud-x:hover { border-color: var(--danger); color: var(--danger); }
