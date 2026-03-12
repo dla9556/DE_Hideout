@@ -295,16 +295,19 @@
       <button class="hbtn" onclick="goHub()">🏠 은거지</button>
       <button class="hbtn" onclick="openHud('growthtree')">닉네임 · Lv.47</button>
       <button class="hbtn dim" onclick="unimpl()">퀘스트</button>
-      <button class="hbtn" onclick="openHud('workshop')">작업장</button>
-      <button class="hbtn" onclick="openHud('merchant')">상인</button>
+      <button class="hbtn" onclick="openHud('workshop')">공방</button>
+      <button class="hbtn" onclick="openHud('merchant')">교환소</button>
       <button class="hbtn" onclick="openHud('growth')">성장</button>
       <button class="hbtn" onclick="openHud('growthtree')">성장 트리</button>
       <button class="hbtn dim" onclick="unimpl()">우편함</button>
-      <button class="hbtn" onclick="openHud('settings')">설정</button>
+      <button class="hbtn dim" onclick="unimpl()">용병</button>
+      <button class="hbtn dim" onclick="unimpl()">소식</button>
+      <button class="hbtn" onclick="openHud('settings')">시스템</button>
       <div class="za-sp"></div>
       <div class="za-info">
-        <div class="info-ch cur-wrap">💰 골드 12,340<div class="cur-tip">골드 재화입니다. 임시 설명입니다.</div></div>
-        <div class="info-ch cur-wrap">💎 크리스탈 88<div class="cur-tip tip-r">크리스탈 재화입니다. 임시 설명입니다.</div></div>
+        <div class="info-ch cur-wrap">🪙 실버 12,340<div class="cur-tip">실버 재화입니다. 임시 설명입니다.</div></div>
+        <div class="info-ch cur-wrap">🔷 D 토큰 88<div class="cur-tip">D 토큰 재화입니다. 임시 설명입니다.</div></div>
+        <div class="info-ch cur-wrap">🔰 계곡의 인장 0<div class="cur-tip tip-r">계곡의 인장입니다. 임시 설명입니다.</div></div>
         <div class="info-ch">🌐 서버 정상</div>
       </div>
     </div>
@@ -363,7 +366,7 @@
     <!-- ZONE-E -->
     <div id="ze">
       <span class="zlbl">ZONE-E</span>
-      <button class="hbtn" onclick="openHud('equipment')">인벤토리</button>
+      <button class="hbtn" onclick="openHud('equipment')">보관소</button>
       <button class="hbtn" style="border-color:#ec407a;color:#ec407a" onclick="goCharSelect()">캐릭터 변경</button>
       <div style="flex:1"></div>
       <button class="hbtn dim" onclick="unimpl()">친구</button>
@@ -374,20 +377,23 @@
       <div class="hud-hdr">
         <span class="zlbl" style="background:rgba(74,124,240,.12);border-color:var(--accent);color:var(--accent)">HUD 오버레이</span>
         <button class="htab" style="border-color:var(--accent);color:var(--accent)" onclick="closeHud()">🏠 은거지</button>
-        <button class="htab" id="ht-merchant"   onclick="openHud('merchant')">상인</button>
+        <button class="htab" id="ht-merchant"   onclick="openHud('merchant')">교환소</button>
         <button class="htab" id="ht-growth"     onclick="openHud('growth')">성장</button>
         <button class="htab" id="ht-growthtree" onclick="openHud('growthtree')">성장 트리</button>
-        <button class="htab" id="ht-workshop"   onclick="openHud('workshop')">작업장</button>
+        <button class="htab" id="ht-workshop"   onclick="openHud('workshop')">공방</button>
         <button class="htab dim" onclick="unimpl()">우편함</button>
-        <button class="htab" id="ht-settings"   onclick="openHud('settings')">설정</button>
+        <button class="htab dim" onclick="unimpl()">용병</button>
+        <button class="htab dim" onclick="unimpl()">소식</button>
+        <button class="htab" id="ht-settings"   onclick="openHud('settings')">시스템</button>
         <div style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:6px;">
-          <div class="info-ch cur-wrap">💰 골드 12,340<div class="cur-tip">골드 재화입니다. 임시 설명입니다.</div></div>
-          <div class="info-ch cur-wrap">💎 크리스탈 88<div class="cur-tip tip-r">크리스탈 재화입니다. 임시 설명입니다.</div></div>
+          <div class="info-ch cur-wrap">🪙 실버 12,340<div class="cur-tip">실버 재화입니다. 임시 설명입니다.</div></div>
+          <div class="info-ch cur-wrap">🔷 D 토큰 88<div class="cur-tip">D 토큰 재화입니다. 임시 설명입니다.</div></div>
+          <div class="info-ch cur-wrap">🔰 계곡의 인장 0<div class="cur-tip tip-r">계곡의 인장입니다. 임시 설명입니다.</div></div>
         </div>
       </div>
       <div class="hud-body">
 
-        <!-- 상인 -->
+        <!-- 교환소 -->
         <div class="hpanel" id="hp-merchant">
           <div class="hsec" style="max-width:240px">
             <div class="hsec-t">카테고리</div>
@@ -436,7 +442,7 @@
           </div>
         </div>
 
-        <!-- 인벤토리 -->
+        <!-- 보관소 -->
         <div class="hpanel" id="hp-equipment">
 
           <!-- 1. 로드아웃 프리셋 (맨 좌측) -->
@@ -533,10 +539,10 @@
           <div class="hsec" id="wf-detail" style="display:flex;flex-direction:column"></div>
         </div>
 
-        <!-- 설정 -->
+        <!-- 시스템 -->
         <div class="hpanel" id="hp-settings">
           <div class="hsec" style="max-width:200px">
-            <div class="hsec-t">설정 카테고리</div>
+            <div class="hsec-t">시스템 카테고리</div>
             <div class="hrow" style="border-color:var(--accent);color:var(--accent)">게임플레이</div>
             <div class="hrow">그래픽</div>
             <div class="hrow">오디오</div>
@@ -545,7 +551,7 @@
           </div>
           <div class="hsec">
             <div class="hsec-t">게임플레이 설정</div>
-            <div class="hbig" style="min-height:200px">설정 항목 목록</div>
+            <div class="hbig" style="min-height:200px">시스템 설정 목록</div>
           </div>
         </div>
 
@@ -720,18 +726,18 @@
             <span id="exp-new-slots" style="font-weight:600;color:#46c878">84칸 (+24)</span>
           </div>
           <div class="exp-row" id="exp-cost-row">
-            <span style="color:var(--muted);font-size:.75rem">💰 필요 골드</span>
-            <span id="exp-cost-val" style="font-weight:600">1,000 G</span>
+            <span style="color:var(--muted);font-size:.75rem">🪙 필요 실버</span>
+            <span id="exp-cost-val" style="font-weight:600">1,000 S</span>
           </div>
           <div class="exp-row" id="exp-gold-row">
-            <span style="color:var(--muted);font-size:.75rem">💰 보유 골드</span>
-            <span id="exp-gold-val" style="font-weight:600">12,340 G</span>
+            <span style="color:var(--muted);font-size:.75rem">🪙 보유 실버</span>
+            <span id="exp-gold-val" style="font-weight:600">12,340 S</span>
           </div>
           <div style="margin-top:14px;padding:10px 14px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
             <div style="font-size:.62rem;color:var(--muted);letter-spacing:.04em;margin-bottom:8px">[테스트]</div>
             <label style="display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--text-muted);cursor:pointer">
               <input type="checkbox" id="sim-gold-ok" style="accent-color:var(--accent)" onchange="refreshExpandModal()">
-              골드 충분 시뮬레이션 (보유량 무시)
+              실버 충분 시뮬레이션 (보유량 무시)
             </label>
           </div>
         </div>
@@ -793,7 +799,7 @@
     <div class="res-t">결과창</div>
     <div class="res-cards">
       <div class="rcard"><div class="rcl">획득 경험치</div><div class="rcv">+2,840 XP</div></div>
-      <div class="rcard"><div class="rcl">획득 골드</div><div class="rcv">+1,560 G</div></div>
+      <div class="rcard"><div class="rcl">획득 실버</div><div class="rcv">+1,560 S</div></div>
       <div class="rcard"><div class="rcl">생존 시간</div><div class="rcv">18:42</div></div>
     </div>
     <div style="font-size:.76rem;color:var(--muted)">획득 아이템</div>
@@ -809,11 +815,11 @@
       <span style="color:#785040;letter-spacing:.04em">[테스트]</span>
       <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
         <input type="checkbox" id="sim-inv-full" style="accent-color:var(--danger)">
-        인벤토리 가득 참 시뮬레이션
+        보관소 가득 참 시뮬레이션
       </label>
     </div>
     <div style="display:flex;gap:10px">
-      <button class="btn-res-ok" style="font-size:.8rem;padding:11px 20px" onclick="moveItemsToInventory(this)">획득한 아이템 인벤토리로 이동</button>
+      <button class="btn-res-ok" style="font-size:.8rem;padding:11px 20px" onclick="moveItemsToInventory(this)">획득한 아이템 보관소로 이동</button>
       <button class="btn-res-ok" style="font-size:.8rem;padding:11px 20px;background:var(--bg3);border:2px solid #c09050;color:#c09050" onclick="goHub()">복귀</button>
     </div>
     <div class="res-acts">
@@ -868,10 +874,10 @@
         padding:'9px 18px', borderRadius:'6px', fontSize:'.76rem',
         zIndex:'9999', pointerEvents:'none', whiteSpace:'nowrap'
       });
-      el.textContent = '⚠ 인벤토리 공간이 부족해서 아이템이 이동되지 않았습니다. 은거지 복귀 후 인벤토리를 정리해주세요';
+      el.textContent = '⚠ 보관소 공간이 부족해서 아이템이 이동되지 않았습니다. 은거지 복귀 후 보관소를 정리해주세요';
     } else {
       btn.disabled = true;
-      btn.textContent = '✔ 인벤토리로 이동 완료';
+      btn.textContent = '✔ 보관소로 이동 완료';
       btn.style.background = 'var(--success)';
       Object.assign(el.style, {
         position:'fixed', bottom:'28px', left:'50%', transform:'translateX(-50%)',
@@ -879,7 +885,7 @@
         padding:'9px 18px', borderRadius:'6px', fontSize:'.76rem',
         zIndex:'9999', pointerEvents:'none', whiteSpace:'nowrap'
       });
-      el.textContent = '획득한 아이템을 보관함에서 인벤토리로 이동했습니다';
+      el.textContent = '획득한 아이템을 보관함에서 보관소로 이동했습니다';
     }
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 2500);
