@@ -137,7 +137,7 @@
     /* 안전 가방 슬롯 */
     .safe-bag-section { margin-top: 10px; }
     .safe-bag-hdr { font-size: .65rem; color: #46c878; letter-spacing: .05em; margin-bottom: 5px; display: flex; align-items: center; gap: 4px; }
-    .safe-bag-grid { display: grid; gap: 4px; }
+    .safe-bag-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
     .safe-bag-slot { height: 46px; border: 1px dashed #46c878; border-radius: 5px; background: rgba(70,200,120,0.07); }
 
     /* ══ MODAL OVERLAY ══ */
@@ -2771,7 +2771,7 @@
       if (bag.safeSlots > 0) {
         safeSection.style.display = 'block';
         if (safeLabel) safeLabel.textContent = bag.safeSlots + '칸';
-        safeGrid.style.gridTemplateColumns = 'repeat(' + bag.safeSlots + ', 1fr)';
+        safeGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
         safeGrid.innerHTML = '';
         for (let i = 0; i < bag.safeSlots; i++) {
           const s = document.createElement('div');
