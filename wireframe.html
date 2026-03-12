@@ -293,12 +293,11 @@
     <div id="za">
       <span class="zlbl">ZONE-A</span>
       <button class="hbtn" onclick="goHub()">🏠 은거지</button>
-      <button class="hbtn" onclick="openHud('growthtree')">닉네임 · Lv.47</button>
+      <button class="hbtn" onclick="openHud('growth')">닉네임 · Lv.47</button>
       <button class="hbtn dim" onclick="unimpl()">퀘스트</button>
       <button class="hbtn" onclick="openHud('workshop')">공방</button>
       <button class="hbtn" onclick="openHud('merchant')">교환소</button>
       <button class="hbtn" onclick="openHud('growth')">성장</button>
-      <button class="hbtn" onclick="openHud('growthtree')">성장 트리</button>
       <button class="hbtn dim" onclick="unimpl()">우편함</button>
       <button class="hbtn dim" onclick="unimpl()">용병</button>
       <button class="hbtn dim" onclick="unimpl()">소식</button>
@@ -379,7 +378,6 @@
         <button class="htab" style="border-color:var(--accent);color:var(--accent)" onclick="closeHud()">🏠 은거지</button>
         <button class="htab" id="ht-merchant"   onclick="openHud('merchant')">교환소</button>
         <button class="htab" id="ht-growth"     onclick="openHud('growth')">성장</button>
-        <button class="htab" id="ht-growthtree" onclick="openHud('growthtree')">성장 트리</button>
         <button class="htab" id="ht-workshop"   onclick="openHud('workshop')">공방</button>
         <button class="htab dim" onclick="unimpl()">우편함</button>
         <button class="htab dim" onclick="unimpl()">용병</button>
@@ -851,7 +849,7 @@
 
 <script>
   const BC = { 'char':'캐릭터 선택', 'hub':'메인 허브', 'ig':'인게임', 'res':'결과창' };
-  const HUD_KEYS = ['merchant','growth','growthtree','workshop','settings','equipment'];
+  const HUD_KEYS = ['merchant','growth','workshop','settings','equipment'];
 
   let mmTimer = null;
   let mmSec = 0;
