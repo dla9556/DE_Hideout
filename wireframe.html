@@ -409,7 +409,7 @@
     .tent-special .mc-stall-awning { background: repeating-linear-gradient(45deg, #4a3808 0, #4a3808 6px, #342a08 6px, #342a08 12px); border-color: #c09020; }
     .tent-special:hover { border-color: #e0b030; box-shadow: 0 0 22px rgba(220,170,40,0.3), 0 4px 16px rgba(0,0,0,0.68); }
     /* NPC */
-    .mc-stall-npc { font-size: .9rem; display: block; line-height: 1; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8)); }
+    .mc-stall-npc { font-size: 1.7rem; display: block; line-height: 1; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8)); }
     .mc-npc-1 { animation: mcNpcWalk 2.2s ease-in-out infinite alternate; }
     .mc-npc-2 { animation: mcNpcWalk 3.1s ease-in-out infinite alternate; }
     .mc-npc-3 { animation: mcNpcWalk 1.8s ease-in-out infinite alternate; }
@@ -427,22 +427,25 @@
     /* 상인 상세 뷰 */
     #mc-merchant-view { width: 100%; min-height: 480px; display: flex; }
     #mc-mer-nav { width: 185px; flex-shrink: 0; overflow-y: auto; padding: 12px 8px; display: flex; flex-direction: column; gap: 3px; background: rgba(0,0,0,.25); border-right: 1px solid #2a1050; }
-    #mc-mer-left { flex: 1; overflow-y: auto; padding: 16px 20px; position: relative; display: flex; flex-direction: column; min-height: 480px; }
+    #mc-mer-left { flex: 1; overflow-y: auto; padding: 16px 20px 16px 16px; position: relative; display: flex; flex-direction: column; min-height: 480px; }
     #mc-mer-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; transition: background .4s; }
     .mc-mer-back { display: inline-flex; align-items: center; gap: 5px; font-size: .7rem; color: var(--muted); cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; transition: color .15s; flex-shrink: 0; position: relative; z-index: 1; }
+    #mc-mer-body { display: flex; gap: 16px; flex: 1; position: relative; z-index: 1; }
+    #mc-mer-items-col { flex: 1; min-width: 0; }
+    #mc-mer-npc-col { width: 130px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 12px; }
     .mc-mer-back:hover { color: var(--text); }
     #mc-mer-content { position: relative; z-index: 1; }
     /* 상인 NPC (상세 뷰) */
-    .mc-mer-npc { position: absolute; bottom: 16px; right: 20px; font-size: 2.8rem; z-index: 1; pointer-events: none; filter: drop-shadow(0 0 14px rgba(180,80,255,0.45)); animation: mcNpcBob 2.4s ease-in-out infinite alternate; }
+    .mc-mer-npc { font-size: 5.5rem; pointer-events: none; filter: drop-shadow(0 0 18px rgba(180,80,255,0.55)); animation: mcNpcBob 2.4s ease-in-out infinite alternate; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; }
     @keyframes mcNpcBob { from { transform: translateY(0); } to { transform: translateY(-10px); } }
-    /* 아이템 그리드 (4열) */
-    .mc-item-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .mc-item-card { background: rgba(0,0,0,.45); border: 1px solid #2a1050; border-radius: 6px; padding: 10px 8px; cursor: pointer; text-align: center; transition: border-color .15s, background .15s; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    /* 아이템 그리드 (3열) */
+    .mc-item-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .mc-item-card { background: rgba(0,0,0,.45); border: 1px solid #2a1050; border-radius: 8px; padding: 14px 10px; cursor: pointer; text-align: center; transition: border-color .15s, background .15s; display: flex; flex-direction: column; align-items: center; gap: 7px; }
     .mc-item-card:hover { border-color: #8040c0; background: rgba(80,20,120,.18); }
     .mc-item-card.sel { border-color: #9050d8; background: rgba(90,30,140,.22); }
-    .mc-item-icon { font-size: 1.5rem; line-height: 1; }
-    .mc-item-name { font-size: .62rem; font-weight: 600; color: #c090e0; line-height: 1.2; }
-    .mc-item-price { font-size: .6rem; color: #8888cc; }
+    .mc-item-icon { font-size: 2.2rem; line-height: 1; }
+    .mc-item-name { font-size: .72rem; font-weight: 600; color: #c090e0; line-height: 1.2; }
+    .mc-item-price { font-size: .68rem; color: #8888cc; }
     /* 구매 패널 */
     #mc-buy-panel { width: 210px; flex-shrink: 0; overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,.3); border-left: 1px solid #2a1050; }
     .mbp-hdr { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; padding-bottom: 9px; border-bottom: 1px solid #2a1050; margin-bottom: 2px; }
@@ -785,7 +788,12 @@
             <div id="mc-mer-left">
               <div id="mc-mer-bg"></div>
               <button class="mc-mer-back" onclick="showMcAlley()">← 교환소 골목으로</button>
-              <div id="mc-mer-content"></div>
+              <div id="mc-mer-body">
+                <div id="mc-mer-items-col">
+                  <div id="mc-mer-content"></div>
+                </div>
+                <div id="mc-mer-npc-col"></div>
+              </div>
             </div>
             <div id="mc-buy-panel" style="display:none">
               <div class="mbp-hdr">구매</div>
@@ -2502,14 +2510,13 @@
       grid.appendChild(card);
     });
     content.appendChild(grid);
-    // NPC (우측 하단 플로팅)
-    const leftEl = document.getElementById('mc-mer-left');
-    const existingNpc = leftEl.querySelector('.mc-mer-npc');
-    if (existingNpc) existingNpc.remove();
+    // NPC (우측 컬럼)
+    const npcCol = document.getElementById('mc-mer-npc-col');
+    npcCol.innerHTML = '';
     const npcEl = document.createElement('div');
     npcEl.className = 'mc-mer-npc';
     npcEl.textContent = m.npc;
-    leftEl.appendChild(npcEl);
+    npcCol.appendChild(npcEl);
   }
 
   function selectMcItem(item) {
