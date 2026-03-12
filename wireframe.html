@@ -520,17 +520,32 @@
         <div class="hpanel" id="hp-workshop">
           <div class="hsec" style="max-width:200px;flex-shrink:0">
             <div class="hsec-t">시설 목록</div>
-            <div class="wf-row on" id="wf-row-slime" onclick="selectFacility('slime')">
+            <div class="wf-row on" id="wf-row-workbench" onclick="selectFacility('workbench')">
+              <span>기본 작업대</span><span class="wf-badge locked" id="wf-badge-workbench">미개방</span>
+            </div>
+            <div class="wf-row" id="wf-row-slime" onclick="selectFacility('slime')">
               <span>애완슬라임</span><span class="wf-badge locked" id="wf-badge-slime">미개방</span>
             </div>
             <div class="wf-row" id="wf-row-weapon" onclick="selectFacility('weapon')">
-              <span>무기 제작대</span><span class="wf-badge locked" id="wf-badge-weapon">미개방</span>
+              <span>무기 제작소</span><span class="wf-badge locked" id="wf-badge-weapon">미개방</span>
             </div>
             <div class="wf-row" id="wf-row-armor" onclick="selectFacility('armor')">
-              <span>방어구 제작대</span><span class="wf-badge locked" id="wf-badge-armor">미개방</span>
+              <span>방어구 제작소</span><span class="wf-badge locked" id="wf-badge-armor">미개방</span>
             </div>
             <div class="wf-row" id="wf-row-consumable" onclick="selectFacility('consumable')">
-              <span>소모품 제작대</span><span class="wf-badge locked" id="wf-badge-consumable">미개방</span>
+              <span>연금술 실험실</span><span class="wf-badge locked" id="wf-badge-consumable">미개방</span>
+            </div>
+            <div class="wf-row" id="wf-row-scroll" onclick="selectFacility('scroll')">
+              <span>주문서 제작소</span><span class="wf-badge locked" id="wf-badge-scroll">미개방</span>
+            </div>
+            <div class="wf-row" id="wf-row-tinkerer" onclick="selectFacility('tinkerer')">
+              <span>땜장이 작업소</span><span class="wf-badge locked" id="wf-badge-tinkerer">미개방</span>
+            </div>
+            <div class="wf-row" id="wf-row-altar" onclick="selectFacility('altar')">
+              <span>정화의 제단</span><span class="wf-badge locked" id="wf-badge-altar">미개방</span>
+            </div>
+            <div class="wf-row" id="wf-row-synthesis" onclick="selectFacility('synthesis')">
+              <span>아이템 합성소</span><span class="wf-badge locked" id="wf-badge-synthesis">미개방</span>
             </div>
             <div class="wf-row" id="wf-row-recipe" onclick="selectFacility('recipe')">
               <span>레시피 보관함</span><span class="wf-badge locked" id="wf-badge-recipe">미개방</span>
@@ -1104,6 +1119,16 @@
   };
 
   const WF_DATA = {
+    workbench: {
+      name: '기본 작업대', maxLv: 3, lv: -1, type: 'craft',
+      desc: '가장 기본적인 제작 작업대입니다. 기초 아이템 및 부품을 제작할 수 있습니다.',
+      openCost: [{mat:'목재', amt:5}, {mat:'고철 조각', amt:3}],
+      upgCost: [
+        [{mat:'목재', amt:10}, {mat:'철 스크랩', amt:3}],
+        [{mat:'강화 부품', amt:5}]
+      ],
+      recipes: ['기초 부품', '간단한 도구', '기본 재료']
+    },
     slime: {
       name: '애완슬라임', maxLv: 3, lv: -1, type: 'slime',
       desc: '던전 플레이 후 은거지 귀환 시 자원을 임의로 수집해 옵니다. 레벨이 높을수록 더 많은 자원을 가져옵니다.',
@@ -1114,7 +1139,7 @@
       ]
     },
     weapon: {
-      name: '무기 제작대', maxLv: 5, lv: -1, type: 'craft',
+      name: '무기 제작소', maxLv: 5, lv: -1, type: 'craft',
       desc: '무기류 아이템을 제작할 수 있습니다. 레벨이 높을수록 더 다양한 레시피를 사용할 수 있습니다.',
       openCost: [{mat:'철 스크랩', amt:15}, {mat:'공구', amt:3}],
       upgCost: [
@@ -1126,7 +1151,7 @@
       recipes: ['기본 소총', '산탄총', '저격소총', '권총', '나이프']
     },
     armor: {
-      name: '방어구 제작대', maxLv: 5, lv: -1, type: 'craft',
+      name: '방어구 제작소', maxLv: 5, lv: -1, type: 'craft',
       desc: '방어구 아이템을 제작할 수 있습니다. 레벨이 높을수록 더 강한 방어구를 제작할 수 있습니다.',
       openCost: [{mat:'철 스크랩', amt:12}, {mat:'섬유', amt:5}],
       upgCost: [
@@ -1138,8 +1163,8 @@
       recipes: ['기본 헬멧', '방탄 조끼', '강화 장갑', '전술 신발', '방호 하의']
     },
     consumable: {
-      name: '소모품 제작대', maxLv: 5, lv: -1, type: 'craft',
-      desc: '소모품 및 잡화 아이템을 제작할 수 있습니다.',
+      name: '연금술 실험실', maxLv: 5, lv: -1, type: 'craft',
+      desc: '소모품 및 연금술 아이템을 제작할 수 있습니다.',
       openCost: [{mat:'유기물', amt:10}, {mat:'화학 약품', amt:2}],
       upgCost: [
         [{mat:'유기물', amt:15}],
@@ -1149,14 +1174,60 @@
       ],
       recipes: ['응급 키트', '붕대', '자극제', '섬광 수류탄', '연막탄', '구급약']
     },
+    scroll: {
+      name: '주문서 제작소', maxLv: 5, lv: -1, type: 'craft',
+      desc: '다양한 주문서를 제작할 수 있습니다. 레벨이 높을수록 더 강력한 주문서를 제작할 수 있습니다.',
+      openCost: [{mat:'설계도', amt:2}, {mat:'희귀 소재', amt:3}],
+      upgCost: [
+        [{mat:'설계도', amt:3}],
+        [{mat:'희귀 소재', amt:5}],
+        [{mat:'희귀 소재', amt:8}, {mat:'특수 성분', amt:3}],
+        [{mat:'희귀 소재', amt:12}]
+      ],
+      recipes: ['강화 주문서', '수리 주문서', '속성 부여 주문서']
+    },
+    tinkerer: {
+      name: '땜장이 작업소', maxLv: 5, lv: -1, type: 'craft',
+      desc: '장비 수리 및 개조 작업을 진행할 수 있습니다.',
+      openCost: [{mat:'공구', amt:5}, {mat:'철 스크랩', amt:10}],
+      upgCost: [
+        [{mat:'철 스크랩', amt:15}],
+        [{mat:'강화 부품', amt:7}],
+        [{mat:'특수 합금', amt:4}],
+        [{mat:'희귀 소재', amt:6}]
+      ],
+      recipes: ['장비 수리', '부품 개조', '튜닝']
+    },
+    altar: {
+      name: '정화의 제단', maxLv: 3, lv: -1, type: 'craft',
+      desc: '오염된 아이템을 정화하거나 저주를 해제합니다.',
+      openCost: [{mat:'강화 소재', amt:8}, {mat:'정제 약품', amt:3}],
+      upgCost: [
+        [{mat:'정제 약품', amt:10}],
+        [{mat:'희귀 소재', amt:8}, {mat:'특수 성분', amt:4}]
+      ],
+      recipes: ['아이템 정화', '저주 해제', '기운 정제']
+    },
+    synthesis: {
+      name: '아이템 합성소', maxLv: 5, lv: -1, type: 'craft',
+      desc: '두 개 이상의 아이템을 합성하여 더 강력한 아이템을 만들 수 있습니다.',
+      openCost: [{mat:'특수 합금', amt:5}, {mat:'희귀 소재', amt:5}],
+      upgCost: [
+        [{mat:'희귀 소재', amt:8}],
+        [{mat:'희귀 소재', amt:12}],
+        [{mat:'희귀 소재', amt:15}, {mat:'강화 소재', amt:8}],
+        [{mat:'희귀 소재', amt:20}]
+      ],
+      recipes: ['아이템 합성', '장비 강화 합성', '특수 합성']
+    },
     recipe: {
       name: '레시피 보관함', maxLv: 0, lv: -1, type: 'storage',
       desc: '인게임 플레이에서 획득한 레시피가 자동으로 이곳으로 이동됩니다.',
       openCost: [{mat:'목재', amt:5}, {mat:'잠금장치', amt:1}]
     }
   };
-  const WF_KEYS = ['slime','weapon','armor','consumable','recipe'];
-  let selectedFacility = 'slime';
+  const WF_KEYS = ['workbench','slime','weapon','armor','consumable','scroll','tinkerer','altar','synthesis','recipe'];
+  let selectedFacility = 'workbench';
 
   function selectFacility(id) {
     selectedFacility = id;
